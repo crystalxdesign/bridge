@@ -44,3 +44,20 @@ The game of bridge has four main segments: set up, bidding, playing the hand, an
  - XX may be bid `IFF` a double is currently active.
 - If all players pass on their first bid, the hand ends immediately and the play segment is skipped.
 - The bidding ends immediately after 3 consecutive players pass following a non-pass bid.
+
+### Playing the hand
+- Play follows the same rotation as the bidding.
+ - Declarer is the member of the partnership which made the final non-`P`/`X` bid who was the first to bid the suit.
+ - Dummy is declarer's partner.
+ - Declarer plays for dummy.
+- One set of four cards played is a trick.
+- The player before dummy plays the first trick.
+- After the opening lead, dummy's cards are laid out so that everyone can see them.
+- After the first trick, the player who won the previous trick leads the next one.
+- The first player may play any card from their hand.
+- The remaining players must play a card of the same suit, if they can.
+- A player may play a card that isn't in the suit led `IFF` they have no cards remaining in the suit.
+- Winning the trick:
+ - The highest card played wins the trick.
+ - Cards played outside of the suit led don't count.
+ - If there is a trump suit and 1 or more of the cards played are in the trump suit, the highest trump wins.
