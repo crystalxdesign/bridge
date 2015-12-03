@@ -61,3 +61,20 @@ The game of bridge has four main segments: set up, bidding, playing the hand, an
  - The highest card played wins the trick.
  - Cards played outside of the suit led don't count.
  - If there is a trump suit and 1 or more of the cards played are in the trump suit, the highest trump wins.
+
+### Scoring
+- If all four players passed to open the bidding, both partnerships score 0.
+- Otherwise, the contract is made if declarer took 6 tricks plus the number of their bid.
+ - Any tricks more than the contract are termed overtricks
+ - Any tricks less than the contract are termed
+- Made contracts:
+
+      Suit       | Normal |  X  |  XX 
+:--------------: | :----: | :-: | :-:
+`NT` - 1st trick |   40   |  80 | 160
+`NT` - others    |   30   |  60 | 120
+    `H`/`S`      |   30   |  60 | 120
+    `C`/`D`      |   20   |  40 | 80
+
+- Overtricks:
+ - If undoubled: 30 points/overtrick in `H`, `S`, or `NT`
