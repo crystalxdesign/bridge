@@ -44,23 +44,25 @@
 - Bridge is played by 4 players - North, South, East, and West.
     - The players are divided into 2 partnerships: `N`/`S` and `E`/`W`.
 - Bridge uses a standard deck of 52 cards.
+- The four suits are split into two groups: minor suits (`C` and `D`) and major suits (`H` and `S`).
 
 #### Auction
 - Players take turns making "calls" which are one of 38 options:
     - A bid of the form `rank + strain`, where:
         - `rank` is an integer from 1 to 7, inclusive.
         - `strain` is one of `C`, `D`, `H`, `S`, and `NT`.
-    - The remaining three calls are `P`, `X`, and `XX`.
-- `P` may be called at any time, and has no effect on the contract.
+    - The remaining three calls are pass, double, and redouble.
+- Pass may be called at any time, and has no effect on the auction.
     - A player may later bid again after passing.
-- A call of `X` can only be made if a bid has previously been made.
+- A call of `X` can only be made if a bid has previously been called.
 - A call of `XX` can be made if `X` has been called after the most recent bid.
 - If a bid is called, then it must be larger than the most recent bid.
 - A bid greater than another bid if:
     - The rank of the first bid is strictly greater than the rank of the second bid,
-    - Or the ranks of the bids are equal and the strain of the first bid is strictly greater than that of the second, where `C` < `D` < `H` < `S` < `NT`.
+    - Or the ranks of the bids are equal and the strain of the first bid is strictly greater than that of the second.
+        - Where `C` < `D` < `H` < `S` < `NT`.
 - The auction ends immediately after 3 consecutive players pass following a non-`P` call.
-    - If all four players pass in the first round of bidding, the auction ends and control skips to the scoring.
+    - If all four players pass in the first round of bidding, the auction ends and the game skips to the scoring.
 - The contract is the largest bid at the end of the auction.
     - If `X` or `XX` have been called after the most recent bid, the contract is doubled or redoubled (respectively).
 - The partnership which bid the contract are the declaring side, the other partnership is the defending side.
@@ -87,16 +89,17 @@
 - Otherwise, the contract is made if declarer took 6 tricks plus the rank of their contract.
     - Tricks more than the contract are overtricks.
     - Tricks less than the contract are undertricks.
+- The side which doesn't score is given a score equal to the negative of the other partnership's score.
 
 ##### Contract points - declarer scores
 - 40 points for the first trick and 30 points for each subsequent trick in `NT`.
-- 30 points/trick in `H` and `S`.
-- 20 points/trick in `C` and `D`.
+- 30 points/trick in major suits.
+- 20 points/trick in minor suits.
 - `X` multiplies the points by 2, `XX` by 4.
 
 ##### Overtrick points - declarer scores
-- 30 points/overtrick in `H`, `S`, and `NT`.
-- 20 points/overtrick in `C` and `D`.
+- 30 points/overtrick in major suits and `NT`.
+- 20 points/overtrick in minor suits.
 - 100 points/overtrick if the contract is doubled.
 - 200 points/overtrick if the contract is redoubled.
 
