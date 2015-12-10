@@ -1,4 +1,18 @@
 # ICS 2O3 Summative Proposal - Bridge
+## Table of contents
+- [Abbreviations](#abbreviations-used)
+- [Proposal](#proposal)
+    - [Development steps](#steps-of-development)
+    - [Rules](#rules)
+        - [Auction](#auction)
+        - [Playing the hand](#playing-the-hand)
+        - [Scoring](#scoring)
+- [Tasks](#tasks)
+    - [Set up](#set-up)
+    - [Auction](#auction-1)
+    - [Playing the hand](#playing-the-hand-1)
+    - [Scoring](#scoring-1)
+
 ### Abbreviations used
 `C`: clubs  
 `D`: diamonds  
@@ -135,5 +149,7 @@ The game of bridge has four main segments: set up, bidding, playing the hand, an
     - If the result is 0, the contract was made.
     - If the result is greater than 0, the contract was made with overtricks.
     - If the result is less than 0, the contract went down.
-- Determine the appropriate number of points based on the rules above.
+- Determine contract points.
+- Determine overtrick and undertrick points.
+- Determine bonus points.
 - Inform the players of the result.
