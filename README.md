@@ -12,6 +12,7 @@
     - [Auction](#auction-1)
     - [Playing the hand](#playing-the-hand-1)
     - [Scoring](#scoring-1)
+- [Sample images](#sample-images)
 
 ### Abbreviations used
 `C`: clubs  
@@ -156,3 +157,14 @@ The game of bridge has four main segments: set up, bidding, playing the hand, an
 - Determine overtrick and undertrick points.
 - Determine bonus points.
 - Inform the players of the result.
+
+## Sample images
+### Auction
+![Auction sketch](images/auction_sketch.jpg)
+
+### Play of the hand
+![Pre-turn sketch](images/play_preturn_sketch.jpg)
+![Play sketch](images/play_sketch.jpg)
+
+### Scoring
+![Scoring sketch](images/scoring_sketch.jpg)
