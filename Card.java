@@ -38,7 +38,7 @@ public class Card {
     public Card(String cardStr) {
         char r = cardStr.charAt(0); // First character
         char s = cardStr.charAt(1); // Second character
-        int rank, suit;
+        int rank = 0, suit = 0;
 
         if (r >= '2' && r <= '9') { rank = (int)r - 48; } // Convert char digit to integer to get the rank
         else if (r == 't')        { rank = Card.TEN; }
