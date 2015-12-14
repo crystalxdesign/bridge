@@ -1,3 +1,6 @@
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class Card {
     public static final int CLUBS    = 0;
     public static final int DIAMONDS = 1;
@@ -34,23 +37,39 @@ public class Card {
      * Creates a card from a string.
      *
      * @param cardStr a string representing the card to be created of the form `rank + suit`
+     * @throws MalformedCardException if the passed string doesn't represent a card
      */
     public Card(String cardStr) {
-        char r = cardStr.charAt(0); // First character
-        char s = cardStr.charAt(1); // Second character
-        int rank = 0, suit = 0;
+        cardStr = cardStr.toLowerCase(); // The conversion is case-insensitive
+
+        // Split the string into two parts
+        Matcher cardMatch = Pattern.compile("(?<rank>[2-9]|10|t)(?<suit>[chds])").matcher(cardStr);
+        String rankStr = cardMatch.group("rank");
+        String suitStr = cardMatch.group("suit");
+
+        // Validate the input
+        if (rankStr == null || suitStr == null) { // If either part of the card string is missing, the whole string is invalid
+            throw new MalformedCardExcpetion(cardStr);
+        }
+
+        // Convert the strings entered to chars
+        char r; // Two options for r: 2-9/t or 10, the latter case is equivalent to t
+        if (rankStr.length() == 1) { r = rankStr.charAt(0); }
+        else { r = 't'; }
+
+        char s = suitStr.charAt(0);
 
         if (r >= '2' && r <= '9') { rank = (int)r - 48; } // Convert char digit to integer to get the rank
         else if (r == 't')        { rank = Card.TEN; }
         else if (r == 'j')        { rank = Card.JACK; }
         else if (r == 'q')        { rank = Card.QUEEN; }
         else if (r == 'k')        { rank = Card.KING; }
-        else if (r == 'a')        { rank = Card.ACE; } // Default to ace
+        else if (r == 'a')        { rank = Card.ACE; }
 
         if (s == 'c')      { suit = Card.CLUBS; }
         else if (s == 'd') { suit = Card.DIAMONDS; }
         else if (s == 'h') { suit = Card.HEARTS; }
-        else if (s == 's') { suit = Card.SPADES; } // Default to spades
+        else if (s == 's') { suit = Card.SPADES; }
 
         this.rank = rank;
         this.suit = suit;
@@ -65,5 +84,40 @@ public class Card {
     public Card(int rank, int suit) {
         this.rank = rank;
         this.suit = suit;
+    }
+
+
+    /**
+     * Convert the <code>Card</code> to a string.
+     * If <code>c</code> is a <code>Card</code> and <code>Card c1 = new Card(c.toString())</code>,
+     * the two objects should be equivalent.
+     *
+     * @return a string
+     */
+    public String toString() {
+        String rankStr, suitStr;
+        if (this.rank >= 2 && this.rank <= 9) { rankStr = new Integer(this.rank).toString(); }
+        else if (this.rank == Card.TEN)       { rankStr = "10"; }
+        else if (this.rank == Card.JACK)      { rankStr = "J"; }
+        else if (this.rank == Card.QUEEN)     { rankStr = "Q"; }
+        else if (this.rank == Card.KING)      { rankStr = "K"; }
+        else                                  { rankStr = "A"; }
+
+        if (this.suit == Card.CLUBS)         { suitStr = "C"; }
+        else if (this.suit == Card.DIAMONDS) { suitStr = "D"; }
+        else if (this.suit == Card.HEARTS)   { suitStr = "H"; }
+        else                                 { suitStr = "S"; }
+
+        return rankStr + suitStr;
+    }
+}
+
+class MalformedCardExcpetion extends RuntimeException {
+    public MalformedCardExcpetion() {
+        super("Invalid card.");
+    }
+
+    public MalformedCardExcpetion(String card) {
+        super("Invalid card: " + card);
     }
 }
