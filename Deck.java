@@ -14,6 +14,7 @@ public class Deck {
         for (int r = 2; r <= Card.ACE; r++) {
             for (int s = Card.CLUBS; s <= Card.SPADES; s++) {
                 this.deck[pos] = new Card(r, s);
+                pos++;
             }
         }
     }
@@ -53,7 +54,7 @@ public class Deck {
 
         // Remove the dealt cards from the deck
         Card[] newDeck = new Card[this.deck.length - number];
-        for (int i = number; i < this.deck.length; i++) { newDeck[i] = this.deck[i]; }
+        for (int i = number; i < this.deck.length; i++) { newDeck[i - number] = this.deck[i]; }
         this.deck = newDeck;
 
         return cards;

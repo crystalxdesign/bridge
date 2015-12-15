@@ -11,13 +11,36 @@ public class Player {
     }
 
     /**
-     * Return the card at the specified position.
+     * Getter for specific cards.
      *
      * @param pos the position to retrieve
      * @return the card at <code>pos</code>
      */
-    public Card getCard(int pos) {
+    public Card cardAt(int pos) {
         return this.hand[pos];
+    }
+
+    /**
+     * Accessor for the hand.
+     *
+     * @return the player's hand
+     */
+    public Card[] hand() {
+        return this.hand;
+    }
+
+    /**
+     * Find a <code>Card</code> in the hand.
+     *
+     * @param c the card to find
+     * @return the position of the card, or -1 if not found
+     */
+    public int find(Card c) {
+        for (int i = 0; i < this.hand.length; i++) {
+            if (this.hand[i] == c) { return i; }
+        }
+
+        return -1;
     }
 
     /**
@@ -27,7 +50,7 @@ public class Player {
      * @return the card at <code>pos</code>
      */
     public Card playCard(int pos) {
-        Card played = this.getCard(pos); // Save the card played to be returned later
+        Card played = this.cardAt(pos); // Save the card played to be returned later
 
         // Remove the card
         Card[] newHand = new Card[this.hand.length - 1];
