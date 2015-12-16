@@ -1,7 +1,7 @@
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Card {
+public class Card implements Comparable<Card> {
     public static final int CLUBS    = 0;
     public static final int DIAMONDS = 1;
     public static final int HEARTS   = 2;
@@ -29,9 +29,7 @@ public class Card {
     /**
      * Creates the default card (ace of spades).
      */
-    public Card() {
-        this(12, 3);
-    }
+    public Card() { this(12, 3); }
 
     /**
      * Creates a card from a string.
@@ -43,14 +41,13 @@ public class Card {
         cardStr = cardStr.toLowerCase(); // The conversion is case-insensitive
 
         // Split the string into two parts
-        Matcher cardMatch = Pattern.compile("(?<rank>[2-9]|10|t)(?<suit>[chds])").matcher(cardStr);
+        Matcher cardMatch = Pattern.compile("^(?<rank>[2-9]|10|[TtJjQqKkAa])(?<suit>[CcDdHhSs])$").matcher(cardStr);
+        if (!cardMatch.matches()) { // Validate the input
+            throw new MalformedCardException(cardStr);
+        }
+
         String rankStr = cardMatch.group("rank");
         String suitStr = cardMatch.group("suit");
-
-        // Validate the input
-        if (rankStr == null || suitStr == null) { // If either part of the card string is missing, the whole string is invalid
-            throw new MalformedCardExcpetion(cardStr);
-        }
 
         // Convert the strings entered to chars
         char r; // Two options for r: 2-9/t or 10, the latter case is equivalent to t
@@ -86,10 +83,23 @@ public class Card {
         this.suit = suit;
     }
 
+    /**
+     * Accessor for the rank of the card.
+     *
+     * @return the rank of the card
+     */
+    public int rank() { return this.rank; }
 
     /**
-     * Convert the <code>Card</code> to a string.
-     * If <code>c</code> is a <code>Card</code> and <code>Card c1 = new Card(c.toString())</code>,
+     * Accessor for the suit of the card.
+     *
+     * @return one of {@code Card.CLUBS}, {@code Card,DAIMONDS}, {@code Card.HEARTS}, and {@code Card.SPADES}
+     */
+    public int suit() { return this.suit; }
+
+    /**
+     * Convert the {@code Card} to a string.
+     * If {@code c} is a {@code Card} and {@code Card c1 = new Card(c.toString())},
      * the two objects should be equivalent.
      *
      * @return a string
@@ -110,14 +120,57 @@ public class Card {
 
         return rankStr + suitStr;
     }
-}
 
-class MalformedCardExcpetion extends RuntimeException {
-    public MalformedCardExcpetion() {
-        super("Invalid card.");
+    public boolean equals(Card c) {
+        return c.rank() == this.rank && c.suit() == this.suit;
     }
 
-    public MalformedCardExcpetion(String card) {
-        super("Invalid card: " + card);
+    /**
+     * Find whether one card is smaller, equal to, or greater than another.
+     * A card is smaller than another one if one of the following is satisfied:
+     * - The rank of the former is less than the rank of the latter
+     * - The ranks are equal and the suit of the former is less than that of
+     *   the latter
+     * Two cards are equal if their ranks and suits are equal. Otherwise, the
+     * first card is larger than the second.
+     *
+     * @param c the card to compare to this one
+     * @return {@literal <} 0 if the first card is less than the second, 0 if they are
+     *         equal, {@literal >} 0 otherwise.
+     * @see java.lang.Comparable#compareTo
+     */
+    @Override
+    public int compareTo(Card c) {
+        int result = this.rank() - c.rank();
+        if (result == 0) { result = this.suit() - c.suit(); }
+
+        return result;
+    }
+
+    // Convenience function for when there isn't a trump suit
+    public int compareTo(Card c, int lead) { return this.compareTo(c, lead, -1); }
+
+    public int compareTo(Card c, int lead, int trump) {
+        int result = 0; // < 0 if this is smaller than c, 0 if they are equal, > 0 otherwise
+
+        if (c.suit() == trump && this.suit == trump) { // If both cards are trumps, the higher trump wins
+            result = this.compareTo(c, this.suit());
+        }
+        else if (c.suit() == lead && this.suit == lead) { // If both cards follow suit, the higher rank wins
+            if (c.rank() < this.rank) {
+                result = -1;
+            }
+            else if (c.rank() < this.rank) {
+                result = 1;
+            }
+        }
+        else if (c.suit() != lead && this.suit == lead) { // If only one of the cards follows suit, that card wins
+            result = 1;
+        }
+        else if (c.suit() == lead && this.suit != lead) {
+            result = -1;
+        }
+
+        return result;
     }
 }
