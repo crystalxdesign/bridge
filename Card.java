@@ -128,10 +128,10 @@ public class Card implements Comparable<Card> {
     /**
      * Find whether one card is smaller, equal to, or greater than another.
      * A card is smaller than another one if one of the following is satisfied:
-     * - The rank of the former is less than the rank of the latter
-     * - The ranks are equal and the suit of the former is less than that of
+     * - The suit of the former is less than the suit of the latter
+     * - The suits are equal and the suit of the former is less than that of
      *   the latter
-     * Two cards are equal if their ranks and suits are equal. Otherwise, the
+     * Two cards are equal if their suits and ranks are equal. Otherwise, the
      * first card is larger than the second.
      *
      * @param c the card to compare to this one
@@ -141,35 +141,8 @@ public class Card implements Comparable<Card> {
      */
     @Override
     public int compareTo(Card c) {
-        int result = this.rank() - c.rank();
-        if (result == 0) { result = this.suit() - c.suit(); }
-
-        return result;
-    }
-
-    // Convenience function for when there isn't a trump suit
-    public int compareTo(Card c, int lead) { return this.compareTo(c, lead, -1); }
-
-    public int compareTo(Card c, int lead, int trump) {
-        int result = 0; // < 0 if this is smaller than c, 0 if they are equal, > 0 otherwise
-
-        if (c.suit() == trump && this.suit == trump) { // If both cards are trumps, the higher trump wins
-            result = this.compareTo(c, this.suit());
-        }
-        else if (c.suit() == lead && this.suit == lead) { // If both cards follow suit, the higher rank wins
-            if (c.rank() < this.rank) {
-                result = -1;
-            }
-            else if (c.rank() < this.rank) {
-                result = 1;
-            }
-        }
-        else if (c.suit() != lead && this.suit == lead) { // If only one of the cards follows suit, that card wins
-            result = 1;
-        }
-        else if (c.suit() == lead && this.suit != lead) {
-            result = -1;
-        }
+        int result = this.suit() - c.suit();
+        if (result == 0) { result = this.rank() - c.rank(); }
 
         return result;
     }

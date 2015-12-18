@@ -28,7 +28,7 @@ public class Deck {
         Card temp; // A temporary variable for swapping values
 
         // Fisher-Yates shuffle, as modified by Durstenfeld and Knuth
-        for (int i = deck.length - 1; i > 0; i--) {
+        for (int i = this.deck.length - 1; i > 0; i--) {
             j = r.nextInt(i + 1); // Generate a random integer in the range [0, i]
 
             // Swap this.deck[i] and this.deck[j]
@@ -42,12 +42,13 @@ public class Deck {
      * Deal a specified number of cards and remove them from the deck.
      *
      * @param number the number of cards to deal
-     * @return an array of cards of length <code>number</code>
+     * @return an array of cards of length {@code number}
      */
     public Card[] deal(int number) {
         if (number < 1 || number > this.deck.length) {
             throw new IllegalArgumentException("Number of cards must between 1 and " + deck.length + ".");
         }
+
         // Get the first n cards from the deck
         Card[] cards = new Card[number];
         for (int i = 0; i < number; i++) { cards[i] = this.deck[i]; }
