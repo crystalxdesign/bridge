@@ -64,13 +64,11 @@ public class Bridge extends Console {
      * @return the player that won
      */
     public int trick(int first, int trump) {
+        Card entered, lead = null; // lead == null indicates this is the first trick
         Card[] played = new Card[4];
-        Card entered;
         int pos;
 
-        boolean valid;
-
-        boolean firstCard = true;
+        boolean firstCard = true; // Needed so that the for repeats at least once
         for (int i = first; i != (first+4) % 4 || firstCard; i = (i+1) % 4) {
             this.clear();
             this.println("Press a key to start the turn.");
@@ -94,14 +92,17 @@ public class Bridge extends Console {
             pos = this.players[i].find(entered);
 
             // Validate card
-            for ( ; pos < 0; pos = this.players[i].find(entered)) {
-                this.print(entered.toString() + " is not in your hand. ");
+            for ( ; !Bridge.playable(entered, this.players[i], lead); pos = this.players[i].find(entered)) {
+                this.print(entered.toString() + " can't be played. ");
                 entered = this.readCard("Choose a card: ");
             }
 
             played[i] = this.players[i].playCard(pos);
 
-            firstCard = false;
+            if (firstCard) {
+                lead = entered;
+                firstCard = false;
+            }
         }
 
         this.clear();
@@ -112,6 +113,20 @@ public class Bridge extends Console {
         this.getChar();
 
         return 0;
+    }
+
+    /**
+     * Check if it's legal to play a card.
+     *
+     * @param check the {@code Card} to test
+     * @param p the person playing the card, before removing it from their hand
+     * @param lead the {@code Card} lead, or {@code null} if this is the first
+     *             card of the trick
+     */
+    public static boolean playable(Card check, Player p, Card lead) {
+        int leadSuit = lead == null ? check.suit() : lead.suit(); // Any suit can be played if this is the card lead
+
+        return !(p.find(check) >= 0 && check.suit() != leadSuit);
     }
 
     public static void main(String[] args) {
