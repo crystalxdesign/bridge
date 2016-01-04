@@ -57,4 +57,20 @@ public class Player {
 
         return played;
     }
+
+    /**
+     * Check if the player has a card of the given suit.
+     *
+     * @param suit the suit to search for
+     * @return {@code true} if the suit was found, {@code false} otherwise
+     */
+    public boolean hasSuit(int suit) {
+        boolean out = false;
+
+        for (Card c : this.hand) {
+            out = out || c.suit() == suit;
+        }
+
+        return out;
+    }
 }
