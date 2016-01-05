@@ -57,18 +57,19 @@ public class Bridge extends Console {
     /**
      * Play a trick, retrieving a card from each player.
      *
-     * @param first the first player to go, one of Bridge.NORTH, Bridge.EAST,
+     * @param leader the first player to go, one of Bridge.NORTH, Bridge.EAST,
      *              Bridge.SOUTH, and Bridge.WEST
      * @param trump the trump suit, one of Card.CLUBS, Card.DIAMONDS,
      *              Card.DIAMONDS, and Card.SPADES
      * @return the player that won
      */
-    public int trick(int first, int trump) {
+    public int trick(int leader, int trump) {
+        // Play the cards
         Card entered, lead = null; // lead == null indicates this is the first card of the trick
         Card[] played = new Card[4];
-        int pos;
+        int pos; // The position of the entered card in the current player's hand
 
-        for (int i = first; i != (first+4) % 4 || lead == null; i = (i+1) % 4) {
+        for (int i = leader; i != (leader+4) % 4 || lead == null; i = (i+1) % 4) {
             this.clear();
             this.println("Press a key to start the turn.");
             this.getChar();
@@ -76,12 +77,15 @@ public class Bridge extends Console {
 
             // Print the cards played so far
             for (int j = 0; j < 4; j++) {
+                if (j == i) { this.setTextColour(java.awt.Color.RED); } // Highlight the current player
+
                 if (j == Bridge.NORTH)      { this.print("North: "); }
                 else if (j == Bridge.EAST)  { this.print("East: "); }
                 else if (j == Bridge.SOUTH) { this.print("South: "); }
                 else if (j == Bridge.WEST)  { this.print("West: "); }
 
                 this.println(played[j] != null ? played[j].toString() : "");
+                this.setTextColour(java.awt.Color.BLACK);
             }
             this.println();
 
@@ -101,6 +105,27 @@ public class Bridge extends Console {
             if (lead == null) { lead = entered; }
         }
 
+        /*
+         * Determine the winner:
+         * - If both cards follow suit with the leader, the higher rank wins.
+         * - Otherwise the higher trump wins.
+         *
+         * Because the initial highest card is the lead, the highest card will always follow suit or be trump.
+         */
+        int winner = leader;
+        for (int i = 0; i < 4; i++) {
+            if (Bridge.followsSuit(played[i], lead) && Bridge.followsSuit(played[winner], lead)) {
+                if (played[i].rank() > played[winner].rank()) { winner = i; }
+            }
+            else {
+                if (played[i].suit() == trump && played[winner].suit() != trump) { winner = i; }
+                else if (played[i].suit() == trump && played[winner].suit() == trump) {
+                    if (played[i].rank() > played[winner].rank()) { winner = i; }
+                }
+            }
+        }
+
+        // Print the played cards
         this.clear();
         this.println("North: " + played[0]);
         this.println("East: " + played[1]);
@@ -108,7 +133,7 @@ public class Bridge extends Console {
         this.println("West: " + played[3]);
         this.getChar();
 
-        return 0;
+        return winner;
     }
 
     /**
@@ -153,7 +178,7 @@ public class Bridge extends Console {
         Bridge game = new Bridge();
         int lead = 3;
         for (int i = 0; i < 13; i++) {
-            lead = game.trick(lead, 0);
+            lead = game.trick(lead, Card.SPADES);
         }
         game.close();
     }
