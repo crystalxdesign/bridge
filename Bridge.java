@@ -8,6 +8,11 @@ public class Bridge extends Console {
      */
     private Player[] players;
 
+    /**
+     * The winners of previous tricks, or -1 if the trick hasn't been played yet.
+     */
+    private int[] results;
+
     public static final int NORTH = 0;
     public static final int EAST  = 1;
     public static final int SOUTH = 2;
@@ -20,7 +25,12 @@ public class Bridge extends Console {
 
         this.players = new Player[4];
         for (int i = 0; i < 4; i++) {
-            this.players[i] = new Player(this.deck.deal(13));
+            this.players[i] = new Player(this.deck.deal(13)); // Initialize the players
+        }
+
+        this.results = new int[13]; // 13 tricks
+        for (int i = 0; i < 13; i++) {
+            this.results[i] = -1; // Fill the array with -1
         }
     }
 
@@ -76,7 +86,7 @@ public class Bridge extends Console {
             this.clear();
 
             // Print the cards played so far
-            for (int j = 0; j < 4; j++) {
+            for (int j = Bridge.NORTH; j <= Bridge.WEST; j++) {
                 if (j == i) { this.setTextColour(java.awt.Color.RED); } // Highlight the current player
 
                 if (j == Bridge.NORTH)      { this.print("North: "); }
@@ -84,11 +94,18 @@ public class Bridge extends Console {
                 else if (j == Bridge.SOUTH) { this.print("South: "); }
                 else if (j == Bridge.WEST)  { this.print("West: "); }
 
-                this.println(played[j] != null ? played[j].toString() : "");
+                this.println(played[j] != null ? played[j].toString() : ""); // Print empty strings instead of nulls
                 this.setTextColour(java.awt.Color.BLACK);
             }
             this.println();
 
+            // Print the results thus far
+            for (int r : this.results) {
+                if (r == -1) { continue; } // Skip -1
+                if (r == i || r == (i+2) % 4) { this.print("|"); } // If either this player or their partner won, display a |
+                else { this.print("-"); } // Otherwise display a -
+            }
+            this.println();
             this.show(this.players[i].hand()); // Print the hand
 
             entered = this.readCard("Choose a card: ");
@@ -127,14 +144,16 @@ public class Bridge extends Console {
 
         // Print the played cards
         this.clear();
-        this.println("North: " + played[0]);
-        this.println("East: " + played[1]);
-        this.println("South: " + played[2]);
-        this.println("West: " + played[3]);
+        this.println("North: " + played[Bridge.NORTH]);
+        this.println("East: " + played[Bridge.EAST]);
+        this.println("South: " + played[Bridge.SOUTH]);
+        this.println("West: " + played[Bridge.WEST]);
         this.getChar();
 
         return winner;
     }
+
+    public void setResult(int trickNum, int r) { this.results[trickNum] = r; }
 
     /**
      * Check if a card has the same suit as the lead.
@@ -176,9 +195,10 @@ public class Bridge extends Console {
 
     public static void main(String[] args) {
         Bridge game = new Bridge();
-        int lead = 3;
+        int lead = Bridge.WEST;
         for (int i = 0; i < 13; i++) {
             lead = game.trick(lead, Card.SPADES);
+            game.setResult(i, lead);
         }
         game.close();
     }
