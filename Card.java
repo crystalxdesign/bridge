@@ -32,12 +32,19 @@ public class Card implements Comparable<Card> {
     public Card() { this(12, 3); }
 
     /**
-     * Creates a card from a string.
+     * Creates a card from a string. The string is accepted if if is of the
+     * form {@code rank+suit}, parsed by the following rules:
+     * - {@code rank} is a number from 2-10 (inclusive) of one of T (ten), J
+     *   (jack), Q (queen), K (king), and A (ace).
+     * - {@code suit} is one of C (clubs), D (diamonds), H (hearts), and S
+     *   (spades).
+     * - The string is parsed case-insensitively.
      *
-     * @param cardStr a string representing the card to be created of the form `rank + suit`
-     * @throws MalformedCardException if the passed string doesn't represent a card
+     * @param cardStr a string representing the card to be created
+     * @throws MalformedCardException if the passed string doesn't represent a
+     *                                card
      */
-    public Card(String cardStr) {
+    public Card(String cardStr) throws MalformedCardException {
         cardStr = cardStr.toLowerCase(); // The conversion is case-insensitive
 
         // Split the string into two parts
@@ -75,8 +82,8 @@ public class Card implements Comparable<Card> {
     /**
      * Creates a card from the rank and suit.
      *
-     * @param rank the rank of the card, an integer in the range 2, 12 (inclusive)
-     * @param suit the suit of the card, an integer in the range 0, 3 (inclusive)
+     * @param rank the rank of the card, an integer between 2 and 14, inclusive
+     * @param suit the suit of the card, an integer between 0 and 3, inclusive
      */
     public Card(int rank, int suit) {
         this.rank = rank;
@@ -93,7 +100,8 @@ public class Card implements Comparable<Card> {
     /**
      * Accessor for the suit of the card.
      *
-     * @return one of {@code Card.CLUBS}, {@code Card,DAIMONDS}, {@code Card.HEARTS}, and {@code Card.SPADES}
+     * @return one of {@code Card.CLUBS}, {@code Card,DAIMONDS},
+     *         {@code Card.HEARTS}, and {@code Card.SPADES}
      */
     public int suit() { return this.suit; }
 

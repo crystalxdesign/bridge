@@ -21,13 +21,17 @@ public class Deck {
 
     /**
      * Randomly shuffle the deck in-place.
+     *
+     * The shuffle algorithm is the Fisher-Yates shuffle (modified by Durstenfeld).
+     * @see <a href="https://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm">
+     *   Fisher-Yates shuffle on Wikipedia
+     * </a>
      */
     public void shuffle() {
         int j; // A random number for performing the shuffle
         java.util.Random r = new java.util.Random();
         Card temp; // A temporary variable for swapping values
 
-        // Fisher-Yates shuffle, as modified by Durstenfeld and Knuth
         for (int i = this.deck.length - 1; i > 0; i--) {
             j = r.nextInt(i + 1); // Generate a random integer in the range [0, i]
 

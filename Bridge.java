@@ -9,7 +9,8 @@ public class Bridge extends Console {
     private Player[] players;
 
     /**
-     * The winners of previous tricks, or -1 if the trick hasn't been played yet.
+     * The winners of previous tricks. If if the trick hasn't been played
+     * yet, the number should be -1.
      */
     private int[] results;
 
@@ -18,6 +19,10 @@ public class Bridge extends Console {
     public static final int SOUTH = 2;
     public static final int WEST  = 3;
 
+    /**
+     * Create a bridge game. The game has a standard 52-card deck dealt to 4
+     * players so that each has a hand of 13 cards.
+     */
     public Bridge() {
         super();
         this.deck = new Deck();
@@ -30,7 +35,7 @@ public class Bridge extends Console {
 
         this.results = new int[13]; // 13 tricks
         for (int i = 0; i < 13; i++) {
-            this.results[i] = -1; // Fill the array with -1
+            this.results[i] = -1; // Fill the array with -1 because none of the tricks have been played yet
         }
     }
 
@@ -48,13 +53,19 @@ public class Bridge extends Console {
         this.println();
     }
 
+    /**
+     * Get a well-formed card from the user. A string is well-formed if it
+     * satisfies the rules of {@link Card#Card(String)}.
+     *
+     * @param prompt a string to display the the user when asking for a card
+     * @return the card the user entered
+     */
     public Card readCard(String prompt) {
         this.print(prompt);
 
-        String s = "";
         Card c;
         try {
-            s = this.readLine(); // Read the input
+            String s = this.readLine(); // Read the input
             c = new Card(s); // Try to convert it to a Card
         } catch (MalformedCardException e) { // If the user entered a bad string
             this.print(s + " is not a valid card. "); // Print an error message
@@ -153,6 +164,13 @@ public class Bridge extends Console {
         return winner;
     }
 
+    /**
+     * Save the result of a trick.
+     *
+     * @param trickNum the zero-indexed number of the trick (i. e. the first
+     *                 trick is trick 0)
+     * @param r the winner of the trick
+     */
     public void setResult(int trickNum, int r) { this.results[trickNum] = r; }
 
     /**
