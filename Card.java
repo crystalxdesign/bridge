@@ -2,17 +2,6 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class Card implements Comparable<Card> {
-    public static final int CLUBS    = 0;
-    public static final int DIAMONDS = 1;
-    public static final int HEARTS   = 2;
-    public static final int SPADES   = 3;
-
-    public static final int TEN   = 10;
-    public static final int JACK  = 11;
-    public static final int QUEEN = 12;
-    public static final int KING  = 13;
-    public static final int ACE   = 14;
-
     /**
      * The rank of the card.
      *
@@ -64,16 +53,16 @@ public class Card implements Comparable<Card> {
         char s = suitStr.charAt(0);
 
         if (r >= '2' && r <= '9') { rank = (int)r - 48; } // Convert char digit to integer to get the rank
-        else if (r == 't')        { rank = Card.TEN; }
-        else if (r == 'j')        { rank = Card.JACK; }
-        else if (r == 'q')        { rank = Card.QUEEN; }
-        else if (r == 'k')        { rank = Card.KING; }
-        else if (r == 'a')        { rank = Card.ACE; }
+        else if (r == 't')        { rank = Rules.TEN; }
+        else if (r == 'j')        { rank = Rules.JACK; }
+        else if (r == 'q')        { rank = Rules.QUEEN; }
+        else if (r == 'k')        { rank = Rules.KING; }
+        else if (r == 'a')        { rank = Rules.ACE; }
 
-        if (s == 'c')      { suit = Card.CLUBS; }
-        else if (s == 'd') { suit = Card.DIAMONDS; }
-        else if (s == 'h') { suit = Card.HEARTS; }
-        else if (s == 's') { suit = Card.SPADES; }
+        if (s == 'c')      { suit = Rules.CLUBS; }
+        else if (s == 'd') { suit = Rules.DIAMONDS; }
+        else if (s == 'h') { suit = Rules.HEARTS; }
+        else if (s == 's') { suit = Rules.SPADES; }
 
         this.rank = rank;
         this.suit = suit;
@@ -100,8 +89,8 @@ public class Card implements Comparable<Card> {
     /**
      * Accessor for the suit of the card.
      *
-     * @return one of {@code Card.CLUBS}, {@code Card,DAIMONDS},
-     *         {@code Card.HEARTS}, and {@code Card.SPADES}
+     * @return one of {@code Rules.CLUBS}, {@code Card,DAIMONDS},
+     *         {@code Rules.HEARTS}, and {@code Rules.SPADES}
      */
     public int suit() { return this.suit; }
 
@@ -115,15 +104,15 @@ public class Card implements Comparable<Card> {
     public String toString() {
         String rankStr, suitStr;
         if (this.rank >= 2 && this.rank <= 9) { rankStr = new Integer(this.rank).toString(); }
-        else if (this.rank == Card.TEN)       { rankStr = "10"; }
-        else if (this.rank == Card.JACK)      { rankStr = "J"; }
-        else if (this.rank == Card.QUEEN)     { rankStr = "Q"; }
-        else if (this.rank == Card.KING)      { rankStr = "K"; }
+        else if (this.rank == Rules.TEN)       { rankStr = "10"; }
+        else if (this.rank == Rules.JACK)      { rankStr = "J"; }
+        else if (this.rank == Rules.QUEEN)     { rankStr = "Q"; }
+        else if (this.rank == Rules.KING)      { rankStr = "K"; }
         else                                  { rankStr = "A"; }
 
-        if (this.suit == Card.CLUBS)         { suitStr = "C"; }
-        else if (this.suit == Card.DIAMONDS) { suitStr = "D"; }
-        else if (this.suit == Card.HEARTS)   { suitStr = "H"; }
+        if (this.suit == Rules.CLUBS)         { suitStr = "C"; }
+        else if (this.suit == Rules.DIAMONDS) { suitStr = "D"; }
+        else if (this.suit == Rules.HEARTS)   { suitStr = "H"; }
         else                                 { suitStr = "S"; }
 
         return rankStr + suitStr;

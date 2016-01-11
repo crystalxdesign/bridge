@@ -2,18 +2,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Bid implements Comparable<Bid> {
-    public static final int CLUBS    = 0;
-    public static final int DIAMONDS = 1;
-    public static final int HEARTS   = 2;
-    public static final int SPADES   = 3;
-    public static final int NOTRUMP  = 4;
-
     private int rank;
     private int strain;
 
     public Bid() {
         this.rank = 1;
-        this.strain = Bid.CLUBS;
+        this.strain = Rules.CLUBS;
     }
 
     public Bid(int rank, int strain) {
@@ -52,11 +46,11 @@ public class Bid implements Comparable<Bid> {
         int rank = (int)r - 48; // Convert char digit to integer to get the rank
 
         int strain;
-        if (s == 'c')      { strain = Bid.CLUBS; }
-        else if (s == 'd') { strain = Bid.DIAMONDS; }
-        else if (s == 'h') { strain = Bid.HEARTS; }
-        else if (s == 's') { strain = Bid.SPADES; }
-        else               { strain = Bid.NOTRUMP; }
+        if (s == 'c')      { strain = Rules.CLUBS; }
+        else if (s == 'd') { strain = Rules.DIAMONDS; }
+        else if (s == 'h') { strain = Rules.HEARTS; }
+        else if (s == 's') { strain = Rules.SPADES; }
+        else               { strain = Rules.NOTRUMP; }
 
         this.rank = rank;
         this.strain = strain;
@@ -72,8 +66,9 @@ public class Bid implements Comparable<Bid> {
     /**
      * Accessor for the strain of the bid.
      *
-     * @return one of {@code Bid.CLUBS}, {@code Bid.DAIMONDS},
-     *         {@code Bid.HEARTS}, {@code Bid.SPADES}, and {@code Bid.NOTRUMP}
+     * @return one of {@code Rules.CLUBS}, {@code Rules.DAIMONDS},
+     *         {@code Rules.HEARTS}, {@code Rules.SPADES}, and
+     *         {@code Rules.NOTRUMP}
      */
     public int strain() { return this.strain; }
 
@@ -110,10 +105,10 @@ public class Bid implements Comparable<Bid> {
         String rankStr = new Integer(this.rank).toString();
 
         String strainStr;
-        if (this.strain == Bid.CLUBS)         { strainStr = "C"; }
-        else if (this.strain == Bid.DIAMONDS) { strainStr = "D"; }
-        else if (this.strain == Bid.HEARTS)   { strainStr = "H"; }
-        else if (this.strain == Bid.SPADES)   { strainStr = "S"; }
+        if (this.strain == Rules.CLUBS)         { strainStr = "C"; }
+        else if (this.strain == Rules.DIAMONDS) { strainStr = "D"; }
+        else if (this.strain == Rules.HEARTS)   { strainStr = "H"; }
+        else if (this.strain == Rules.SPADES)   { strainStr = "S"; }
         else                                  { strainStr = "NT"; }
 
         return rankStr + strainStr;

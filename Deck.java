@@ -11,8 +11,8 @@ public class Deck {
         this.deck = new Card[52];
 
         int pos = 0;
-        for (int r = 2; r <= Card.ACE; r++) {
-            for (int s = Card.CLUBS; s <= Card.SPADES; s++) {
+        for (int r = 2; r <= Rules.ACE; r++) {
+            for (int s = Rules.CLUBS; s <= Rules.SPADES; s++) {
                 this.deck[pos] = new Card(r, s);
                 pos++;
             }
