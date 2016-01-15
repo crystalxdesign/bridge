@@ -65,4 +65,61 @@ public class Rules {
 
         return name;
     }
+
+    public static int score(Bid contract, int doubled, int side, int[] results) {
+        int contractPoints = 0, overPoints = 0, underPoints = 0, bonusPoints = 0;
+        int need = 6 + contract.rank();
+        int made = 0;
+        for (int r : results) {
+            if (r == side) { made++; }
+        }
+
+        if (contract == null) { return 0; } // Nobody scores if everybody passed
+
+        /*
+         * Contract points:
+         * - NT: 40 points for the first trick, 30 points/trick after
+         * - Major suits: 30 points/trick
+         * - Minor suits: 20 points/trick
+         * - X and XX double and quadruple the score
+         */
+        if (made >= need) {
+            if (contract.strain() == Rules.NOTRUMP) {
+                contractPoints = 10 + 30 * contract.rank();
+            }
+            else if (contract.strain() == Rules.HEARTS || contract.strain() == Rules.SPADES) {
+                contractPoints = 30 * contract.rank();
+            }
+            else if (contract.strain() == Rules.CLUBS || contract.strain() == Rules.DIAMONDS) {
+                contractPoints = 20 * contract.rank();
+            }
+
+            contractPoints *= doubled * 2;
+        }
+
+        /*
+         * Overtrick points:
+         * - NT/H/S: 30 points/overtrick
+         * - C/D: 20 points/overtrick
+         * - X: 100 points/overtrick
+         * - XX: 200 points/overtrick
+         */
+        if (made > need) {
+            int overtricks = made - need;
+            if (doubled == 1) {
+                overPoints = 100 * overtricks;
+            }
+            else if (doubled == 2) {
+                overPoints = 200 * overtricks;
+            }
+            else if (contract.strain() == Rules.HEARTS || contract.strain() == Rules.SPADES || contract.strain() == Rules.NOTRUMP) {
+                overPoints = 30 * overtricks;
+            }
+            else {
+                overPoints = 20 * overtricks;
+            }
+        }
+
+        return contractPoints + overPoints - underPoints + bonusPoints;
+    }
 }
