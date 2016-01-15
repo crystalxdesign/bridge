@@ -36,7 +36,8 @@ public class Rules {
      *
      * The card is legal if the following conditions are met:
      * - The card is in the player's hand.
-     * - The suit of the card is the same as the suit of the lead, unless either of the following are true:
+     * - The suit of the card is the same as the suit of the lead, unless either
+     *   of the following are true:
      *  - The card being played is the lead
      *  - The player can't follow suit
      *
@@ -53,5 +54,15 @@ public class Rules {
         boolean legalCard = p.find(check) >= 0;
 
         return legalSuit && legalCard;
+    }
+
+    public static String playerName(int player) {
+        String name = "";
+        if (player == Rules.NORTH)      { name = "North"; }
+        else if (player == Rules.EAST)  { name = "East"; }
+        else if (player == Rules.SOUTH) { name = "South"; }
+        else if (player == Rules.WEST)  { name = "West"; }
+
+        return name;
     }
 }

@@ -73,4 +73,23 @@ public class Player {
 
         return out;
     }
+
+    public Card[] suit(int s) {
+        // Count the suit
+        int numSuit = 0;
+        for (int i = 0; i < this.hand.length; i++) {
+            if (this.hand[i].suit() == s) { numSuit++; }
+        }
+
+        int pos = 0;
+        Card[] suit = new Card[numSuit];
+        for (Card c : this.hand) {
+            if (c.suit() == s) {
+                suit[pos] = c;
+                pos++;
+            }
+        }
+
+        return suit;
+    }
 }

@@ -30,21 +30,32 @@ public class Bridge extends Console {
 
         this.results = new int[13]; // 13 tricks
         for (int i = 0; i < 13; i++) {
-            this.results[i] = -1; // Fill the array with -1 because none of the tricks have been played yet
+            this.results[i] = -1; // Fill the array with -1
         }
     }
 
     /**
      * Display a hand of cards
      *
-     * @param hand the player's cards
+     * @param p the player whose hand is being displayed
      */
-    public void show(Card[] hand) {
-        this.print("Your hand: ");
-        for (Card c : hand) {
-            this.print(c + " ");
-        }
+    public void show(Player p) {
+        this.println("Your hand:");
 
+        this.print("C: ");
+        for (Card c : p.suit(Rules.CLUBS)) { this.print(c.rankStr() + " "); }
+        this.println();
+
+        this.print("D: ");
+        for (Card c : p.suit(Rules.DIAMONDS)) { this.print(c.rankStr() + " "); }
+        this.println();
+
+        this.print("H: ");
+        for (Card c : p.suit(Rules.HEARTS)) { this.print(c.rankStr() + " "); }
+        this.println();
+
+        this.print("S: ");
+        for (Card c : p.suit(Rules.SPADES)) { this.print(c.rankStr() + " "); }
         this.println();
     }
 
@@ -96,10 +107,7 @@ public class Bridge extends Console {
             for (int j = Rules.NORTH; j <= Rules.WEST; j++) {
                 if (j == i) { this.setTextColour(java.awt.Color.RED); } // Highlight the current player
 
-                if (j == Rules.NORTH)      { this.print("North: "); }
-                else if (j == Rules.EAST)  { this.print("East: "); }
-                else if (j == Rules.SOUTH) { this.print("South: "); }
-                else if (j == Rules.WEST)  { this.print("West: "); }
+                this.print(Rules.playerName(j) + ": ");
 
                 this.println(played[j] != null ? played[j].toString() : ""); // Print empty strings instead of nulls
                 this.setTextColour(java.awt.Color.BLACK);
@@ -109,11 +117,11 @@ public class Bridge extends Console {
             // Print the results thus far
             for (int r : this.results) {
                 if (r == -1) { continue; } // Skip -1
-                if (r == i || r == (i+2) % 4) { this.print("|"); } // If either this player or their partner won, display a |
+                if (r % 2 == i % 2) { this.print("|"); } // If either this player or their partner won, display a |
                 else { this.print("-"); } // Otherwise display a -
             }
             this.println();
-            this.show(this.players[i].hand()); // Print the hand
+            this.show(this.players[i]); // Print the hand
 
             entered = this.readCard("Choose a card: ");
             pos = this.players[i].find(entered);
@@ -134,7 +142,8 @@ public class Bridge extends Console {
          * - If both cards follow suit with the leader, the higher rank wins.
          * - Otherwise the higher trump wins.
          *
-         * Because the initial highest card is the lead, the highest card will always follow suit or be trump.
+         * Because the initial highest card is the lead, the highest card will
+         * always follow suit or be trump.
          */
         int winner = leader;
         for (int i = 0; i < 4; i++) {
@@ -167,14 +176,14 @@ public class Bridge extends Console {
      *                 trick is trick 0)
      * @param r the winner of the trick
      */
-    public void setResult(int trickNum, int r) { this.results[trickNum] = r; }
+    public void setResult(int trickNum, int r) { this.results[trickNum] = r % 2; }
 
     public static void main(String[] args) {
         Bridge game = new Bridge();
         int lead = Rules.WEST;
         for (int i = 0; i < 13; i++) {
             lead = game.trick(lead, Rules.SPADES);
-            game.setResult(i, lead);
+            game.setResult(i % 2, lead);
         }
         game.close();
     }

@@ -22,7 +22,8 @@ public class Deck {
     /**
      * Randomly shuffle the deck in-place.
      *
-     * The shuffle algorithm is the Fisher-Yates shuffle (modified by Durstenfeld).
+     * The shuffle algorithm is the Fisher-Yates shuffle (modified by
+     * Durstenfeld).
      * @see <a href="https://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm">
      *   Fisher-Yates shuffle on Wikipedia
      * </a>

@@ -86,36 +86,49 @@ public class Card implements Comparable<Card> {
      */
     public int rank() { return this.rank; }
 
+    public String rankStr() {
+        String out;
+        if (this.rank >= 2 && this.rank <= 9)  { out = new Integer(this.rank).toString(); }
+        else if (this.rank == Rules.TEN)       { out = "10"; }
+        else if (this.rank == Rules.JACK)      { out = "J"; }
+        else if (this.rank == Rules.QUEEN)     { out = "Q"; }
+        else if (this.rank == Rules.KING)      { out = "K"; }
+        else                                   { out = "A"; }
+
+        return out;
+    }
+
     /**
      * Accessor for the suit of the card.
      *
-     * @return one of {@code Rules.CLUBS}, {@code Card,DAIMONDS},
+     * @return one of {@code Rules.CLUBS}, {@code Rules.DAIMONDS},
      *         {@code Rules.HEARTS}, and {@code Rules.SPADES}
      */
     public int suit() { return this.suit; }
 
+    public String suitStr() {
+        String out;
+        if (this.suit == Rules.CLUBS)         { out = "C"; }
+        else if (this.suit == Rules.DIAMONDS) { out = "D"; }
+        else if (this.suit == Rules.HEARTS)   { out = "H"; }
+        else                                  { out = "S"; }
+
+        return out;
+    }
+
     /**
      * Convert the {@code Card} to a string.
-     * If {@code c} is a {@code Card} and {@code Card c1 = new Card(c.toString())},
-     * the two objects should be equivalent.
+     * If {@code c} is a {@code Card} and
+     * {@code Card c1 = new Card(c.toString())}, the two objects should be
+     * equivalent.
      *
      * @return a string
      */
     public String toString() {
-        String rankStr, suitStr;
-        if (this.rank >= 2 && this.rank <= 9) { rankStr = new Integer(this.rank).toString(); }
-        else if (this.rank == Rules.TEN)       { rankStr = "10"; }
-        else if (this.rank == Rules.JACK)      { rankStr = "J"; }
-        else if (this.rank == Rules.QUEEN)     { rankStr = "Q"; }
-        else if (this.rank == Rules.KING)      { rankStr = "K"; }
-        else                                  { rankStr = "A"; }
+        String r = this.rankStr();
+        String s = this.suitStr();
 
-        if (this.suit == Rules.CLUBS)         { suitStr = "C"; }
-        else if (this.suit == Rules.DIAMONDS) { suitStr = "D"; }
-        else if (this.suit == Rules.HEARTS)   { suitStr = "H"; }
-        else                                 { suitStr = "S"; }
-
-        return rankStr + suitStr;
+        return r+s;
     }
 
     public boolean equals(Card c) {
@@ -132,8 +145,8 @@ public class Card implements Comparable<Card> {
      * first card is larger than the second.
      *
      * @param c the card to compare to this one
-     * @return {@literal <} 0 if the first card is less than the second, 0 if they are
-     *         equal, {@literal >} 0 otherwise.
+     * @return {@literal <} 0 if the first card is less than the second, 0 if
+     *         they are equal, {@literal >} 0 otherwise.
      * @see java.lang.Comparable#compareTo
      */
     @Override
