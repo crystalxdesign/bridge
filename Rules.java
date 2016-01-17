@@ -157,6 +157,39 @@ public class Rules {
             }
         }
 
+        /*
+         * Bonus points:
+         * - Slam bonus:
+         *  - For a made rank-6 contract, 500 points are awarded.
+         *  - For a made rank-7 contract, 1000 points are awarded.
+         * - Game bonus: for a made contract worth 100 or more points, 300
+         *   points are awarded.
+         * - Doubled/redoubled bonus:
+         *  - If a made contract was doubled, 50 points are awarded.
+         *  - If a made contract was redoubled, 100 points are awarded.
+         */
+        if (made >= need) {
+            if (need == 6) {
+                bonusPoints += 500;
+            }
+            else if (need == 7) {
+                bonusPoints += 1000;
+            }
+
+            if (contractPoints >= 100) {
+                bonusPoints += 300;
+            }
+
+            if (made - need >= 0) {
+                if (doubled == 1) {
+                    bonusPoints += 50;
+                }
+                else if (doubled == 2) {
+                    bonusPoints += 100;
+                }
+            }
+        }
+
         return contractPoints + overPoints - underPoints + bonusPoints;
     }
 }
