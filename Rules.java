@@ -16,6 +16,12 @@ public class Rules {
     public static final int SOUTH = 2;
     public static final int WEST  = 3;
 
+    public static final int PASS     = 0;
+    public static final int DOUBLE   = 1;
+    public static final int REDOUBLE = 2;
+
+    private Rules() {} // A Rules object should never be instantiated
+
     /**
      * Check if a card has the same suit as the lead.
      *
@@ -117,6 +123,37 @@ public class Rules {
             }
             else {
                 overPoints = 20 * overtricks;
+            }
+        }
+
+        /*
+         * Undertrick points:
+         * | Number of undertricks | Undoubled | Doubled | Redoubled |
+         * |-----------------------+-----------+---------+-----------|
+         * |          1st          |           |   100   |    200    |
+         * |-----------------------|           |---------+-----------|
+         * |       2nd & 3rd       |    50     |   200   |    400    |
+         * |-----------------------|           |---------+-----------|
+         * |          4th+         |           |   300   |    600    |
+         * |-----------------------+-----------+---------+-----------|
+         */
+        if (made < need) {
+            int undertricks = made - need;
+            if (doubled == 0) {
+                underPoints = 50 * undertricks;
+            }
+            else {
+                for (int i = 0; i < undertricks; i++) {
+                    if (i == 0) {
+                        underPoints += 100 * doubled;
+                    }
+                    else if (i == 1 || i == 2) {
+                        underPoints += 200 * doubled;
+                    }
+                    else {
+                        underPoints += 300 * doubled;
+                    }
+                }
             }
         }
 
