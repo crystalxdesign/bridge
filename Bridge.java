@@ -19,7 +19,7 @@ public class Bridge extends Console {
      * players so that each has a hand of 13 cards.
      */
     public Bridge() {
-        super();
+        super("Bridge");
         this.deck = new Deck();
         this.deck.shuffle();
 
@@ -99,7 +99,7 @@ public class Bridge extends Console {
 
         for (int i = leader; i != (leader+4) % 4 || lead == null; i = (i+1) % 4) {
             this.clear();
-            this.println("Press a key to start the turn.");
+            this.println("Press a key to start " + Rules.playerName(i) + "'s turn.");
             this.getChar();
             this.clear();
 
@@ -178,13 +178,40 @@ public class Bridge extends Console {
      */
     public void setResult(int trickNum, int r) { this.results[trickNum] = r % 2; }
 
-    public static void main(String[] args) {
+    /**
+     * Get the results of the game.
+     *
+     * @return the winners of each trick
+     */
+    public int[] getResults() { return this.results; }
+
+    public static void main(String[] args) throws MalformedBidException {
         Bridge game = new Bridge();
-        int lead = Rules.WEST;
+        int leader = Rules.WEST;
+        game.setWindowTitle("4S by South");
         for (int i = 0; i < 13; i++) {
-            lead = game.trick(lead, Rules.SPADES);
-            game.setResult(i % 2, lead);
+            leader = game.trick(leader, Rules.SPADES);
+            game.setResult(i, leader % 2);
         }
+
+        int score = Rules.score(new Bid("4S"), Rules.PASS, Rules.NORTH, game.getResults());
+        game.clear();
+
+        game.print("N/S: ");
+        for (int r : game.getResults()) {
+            game.print(r == 0 ? "|" : " ");
+        }
+        game.println();
+        game.print("E/W: ");
+        for (int r : game.getResults()) {
+            game.print(r == 1 ? "|" : " ");
+        }
+        game.println();
+
+        game.println("North/South scores " + score);
+        game.println("East/West scores " + -score);
+        game.getChar();
+
         game.close();
     }
 }

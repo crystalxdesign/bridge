@@ -138,7 +138,7 @@ public class Rules {
          * |-----------------------+-----------+---------+-----------|
          */
         if (made < need) {
-            int undertricks = made - need;
+            int undertricks = need - made;
             if (doubled == 0) {
                 underPoints = 50 * undertricks;
             }
