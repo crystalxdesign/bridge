@@ -10,7 +10,8 @@ public class Contract {
     private final int DOUBLED;
 
     /**
-     * The players need to take 6 more than the rank of the contract.
+     * The players need to take 6 more than the rank of the contract. If the
+     * rank is 0, everybody passed and both sides score 0.
      */
     private final int RANK;
 
@@ -29,7 +30,7 @@ public class Contract {
     /**
      * Create a contract from four ints.
      *
-     * @param rank 1-7, inclusive
+     * @param rank 0-7, inclusive
      * @param strain {@code Rules.CLUBS}, {@code Rules.DIAMONDS},
      *               {@code Rules.HEARTS}, {@code Rules.SPADES}, or
      *               {@code Rules.NOTRUMP}
@@ -59,7 +60,7 @@ public class Contract {
     /**
      * Get the rank of the contract.
      *
-     * @return 1-7, inclusive
+     * @return 0-7, inclusive
      */
     public int rank() { return this.RANK; }
 
@@ -86,4 +87,132 @@ public class Contract {
      *         {@code Rules.SOUTH}, or {@code Rules.WEST}
      */
     public int declarer() { return this.DECLARER; }
+
+    /**
+     * Find the score for the contract.
+     *
+     * The score is the sum of contract, overtrick, and bonus points minus
+     * undertrick points.
+     *
+     * Contract points:
+     * - NT: 40 points for the first trick, 30 points/trick after
+     * - Major suits: 30 points/trick
+     * - Minor suits: 20 points/trick
+     * - X and XX double and quadruple the score
+     *
+     * Overtrick points:
+     * - NT/H/S: 30 points/overtrick
+     * - C/D: 20 points/overtrick
+     * - X: 100 points/overtrick
+     * - XX: 200 points/overtrick
+     *
+     * Undertrick points:
+     * +-----------------------+-----------+---------+-----------+
+     * | Number of undertricks | Undoubled | Doubled | Redoubled |
+     * |-----------------------+-----------+---------+-----------|
+     * |          1st          |           |   100   |    200    |
+     * |-----------------------|           |---------+-----------|
+     * |      2nd and 3rd      |    50     |   200   |    400    |
+     * |-----------------------|           |---------+-----------|
+     * |          4th+         |           |   300   |    600    |
+     * |-----------------------+-----------+---------+-----------|
+     *
+     * @param results the winners of each trick
+     * @return declarer's score (defender's score is the negative of the score)
+     */
+    public int score(int[] results) {
+        int contractPoints = 0, overPoints = 0, underPoints = 0, bonusPoints = 0;
+        int need = 6 + this.RANK;
+        int made = 0;
+        for (int r : results) {
+            if (r == this.DECLARER) { made++; }
+        }
+
+        if (this.RANK == 0) { return 0; } // Nobody scores if everybody passed
+
+        if (made >= need) {
+            if (this.STRAIN == Rules.NOTRUMP) {
+                contractPoints = 10 + 30 * this.RANK;
+            }
+            else if (this.STRAIN == Rules.HEARTS || this.STRAIN == Rules.SPADES) {
+                contractPoints = 30 * this.RANK;
+            }
+            else if (this.STRAIN == Rules.CLUBS || this.STRAIN == Rules.DIAMONDS) {
+                contractPoints = 20 * this.RANK;
+            }
+
+            contractPoints *= this.DOUBLED * 2;
+        }
+
+        if (made > need) {
+            int overtricks = made - need;
+            if (this.DOUBLED == 1) {
+                overPoints = 100 * overtricks;
+            }
+            else if (this.DOUBLED == 2) {
+                overPoints = 200 * overtricks;
+            }
+            else if (this.STRAIN == Rules.HEARTS || this.STRAIN == Rules.SPADES || this.STRAIN == Rules.NOTRUMP) {
+                overPoints = 30 * overtricks;
+            }
+            else {
+                overPoints = 20 * overtricks;
+            }
+        }
+
+        if (made < need) {
+            int undertricks = need - made;
+            if (this.DOUBLED == 0) {
+                underPoints = 50 * undertricks;
+            }
+            else {
+                for (int i = 0; i < undertricks; i++) {
+                    if (i == 0) {
+                        underPoints += 100 * this.DOUBLED * 2;
+                    }
+                    else if (i == 1 || i == 2) {
+                        underPoints += 200 * this.DOUBLED * 2;
+                    }
+                    else {
+                        underPoints += 300 * this.DOUBLED * 2;
+                    }
+                }
+            }
+        }
+
+        /*
+         * Bonus points:
+         * - Slam bonus:
+         *  - For a made rank-6 contract, 500 points are awarded.
+         *  - For a made rank-7 contract, 1000 points are awarded.
+         * - Game bonus: for a made contract worth 100 or more points, 300
+         *   points are awarded.
+         * - Doubled/redoubled bonus:
+         *  - If a made contract was doubled, 50 points are awarded.
+         *  - If a made contract was redoubled, 100 points are awarded.
+         */
+        if (made >= need) {
+            if (need == 6) {
+                bonusPoints += 500;
+            }
+            else if (need == 7) {
+                bonusPoints += 1000;
+            }
+
+            if (contractPoints >= 100) {
+                bonusPoints += 300;
+            }
+
+            if (made - need >= 0) {
+                if (this.DOUBLED == 1) {
+                    bonusPoints += 50;
+                }
+                else if (this.DOUBLED == 2) {
+                    bonusPoints += 100;
+                }
+            }
+        }
+
+        return contractPoints + overPoints - underPoints + bonusPoints;
+    }
 }
