@@ -74,22 +74,7 @@ public class Bridge extends Console {
         try {
             s = this.readLine(); // Read the input
             if (s.equals("?") || s.equals("h") || s.equals("H")) { // If the user asks for more information
-                // Print help text
-                this.println("Enter a card as (rank)(suit).");
-                this.println("The card is evaluated case-insensitively, so H and h are the same.");
-                this.println("Ranks:             Suits:");
-                this.println("A/a    => ace      S/s => spades");
-                this.println("K/k    => king     H/h => hearts");
-                this.println("Q/q    => queen    D/d => diamonds");
-                this.println("J/j    => jack     C/c => clubs");
-                this.println("T/t/10 => ten");
-                this.println();
-                this.println("Examples:");
-                this.println("Ac  => Ace of clubs");
-                this.println("10d => Ten of diamonds");
-                this.println("TH  => Ten of hearts");
-                this.println("2s  => Two of spades");
-                this.println("Enter \"?\" to print this text.");
+                Bridge.showHelp();
 
                 c = this.readCard(prompt); // Go back to the prompt
             }
@@ -207,15 +192,46 @@ public class Bridge extends Console {
      */
     public int[] getResults() { return this.results; }
 
+    /**
+     * Show help for card entry in a new window.
+     */
+    public static void showHelp() {
+        Console help = new Console("Help");
+
+        help.println("Enter a card as (rank)(suit).");
+        help.println("The card is evaluated case-insensitively, so H and h are the same.");
+        help.println("Ranks:             Suits:");
+        help.println("A/a    -> ace      S/s -> spades");
+        help.println("K/k    -> king     H/h -> hearts");
+        help.println("Q/q    -> queen    D/d -> diamonds");
+        help.println("J/j    -> jack     C/c -> clubs");
+        help.println("T/t/10 -> ten");
+        help.println();
+        help.println("Examples:");
+        help.println("Ac  -> Ace of clubs");
+        help.println("10d -> Ten of diamonds");
+        help.println("TH  -> Ten of hearts");
+        help.println("2s  -> Two of spades");
+        help.println();
+        help.println("Enter \"?\", \"h\", or \"H\" to print this text.");
+        help.println();
+        help.println("Press any key to exit.");
+
+        help.getChar();
+        help.close();
+    }
+
     public static void main(String[] args) throws MalformedBidException {
         Bridge game = new Bridge();
-        int leader = Rules.WEST;
+        Contract c = new Contract(new Bid("4S"), Rules.DOUBLE, Rules.NORTH);
+
+        int leader = (c.declarer() + 1) % 4;
         for (int i = 0; i < 13; i++) {
-            leader = game.trick(leader, Rules.SPADES);
+            leader = game.trick(leader, c.strain());
             game.setResult(i, leader % 2);
         }
 
-        int score = Rules.score(new Bid("4S"), Rules.PASS, Rules.NORTH, game.getResults());
+        int score = c.score(game.getResults());
         game.clear();
 
         game.print("N/S: ");
