@@ -73,7 +73,29 @@ public class Bridge extends Console {
         String s = "";
         try {
             s = this.readLine(); // Read the input
-            c = new Card(s); // Try to convert it to a Card
+            if (s.equals("?") || s.equals("h") || s.equals("H")) { // If the user asks for more information
+                // Print help text
+                this.println("Enter a card as (rank)(suit).");
+                this.println("The card is evaluated case-insensitively, so H and h are the same.");
+                this.println("Ranks:             Suits:");
+                this.println("A/a    => ace      S/s => spades");
+                this.println("K/k    => king     H/h => hearts");
+                this.println("Q/q    => queen    D/d => diamonds");
+                this.println("J/j    => jack     C/c => clubs");
+                this.println("T/t/10 => ten");
+                this.println();
+                this.println("Examples:");
+                this.println("Ac  => Ace of clubs");
+                this.println("10d => Ten of diamonds");
+                this.println("TH  => Ten of hearts");
+                this.println("2s  => Two of spades");
+                this.println("Enter \"?\" to print this text.");
+
+                c = this.readCard(prompt); // Go back to the prompt
+            }
+            else {
+                c = new Card(s); // Try to convert it to a Card
+            }
         } catch (MalformedCardException e) { // If the user entered a bad string
             this.print(s + " is not a valid card. "); // Print an error message
             c = this.readCard(prompt); // Try again
@@ -123,13 +145,13 @@ public class Bridge extends Console {
             this.println();
             this.show(this.players[i]); // Print the hand
 
-            entered = this.readCard("Choose a card: ");
+            entered = this.readCard("Enter a card (or ? for help): ");
             pos = this.players[i].find(entered);
 
             // Validate card
             for ( ; !Rules.playable(entered, this.players[i], lead); pos = this.players[i].find(entered)) {
                 this.print(entered.toString() + " can't be played. ");
-                entered = this.readCard("Choose a card: ");
+                entered = this.readCard("Enter a card  (or ? for help): ");
             }
 
             played[i] = this.players[i].playCard(pos);
@@ -188,7 +210,6 @@ public class Bridge extends Console {
     public static void main(String[] args) throws MalformedBidException {
         Bridge game = new Bridge();
         int leader = Rules.WEST;
-        game.setWindowTitle("4S by South");
         for (int i = 0; i < 13; i++) {
             leader = game.trick(leader, Rules.SPADES);
             game.setResult(i, leader % 2);
