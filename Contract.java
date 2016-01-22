@@ -21,7 +21,7 @@ public class Contract {
     private final int STRAIN;
 
     /**
-     * Create the default contract (1S by North).
+     * Create the default contract (1NT by North).
      */
     public Contract() {
         this(1, Rules.NOTRUMP, 0, Rules.NORTH);

@@ -1,4 +1,6 @@
 import hsa.Console;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Bridge extends Console {
     private Deck deck;
@@ -116,7 +118,7 @@ public class Bridge extends Console {
 
                 this.print(Rules.playerName(j) + ": ");
 
-                this.println(played[j] != null ? played[j].toString() : ""); // Print empty strings instead of nulls
+                this.println(played[j] != null ? played[j].toString() : ""); // Don't print null
                 this.setTextColour(java.awt.Color.BLACK);
             }
             this.println();
@@ -225,29 +227,61 @@ public class Bridge extends Console {
         Bridge game = new Bridge();
         Contract c = new Contract(new Bid("4S"), Rules.DOUBLE, Rules.NORTH);
 
-        int leader = (c.declarer() + 1) % 4;
-        for (int i = 0; i < 13; i++) {
-            leader = game.trick(leader, c.strain());
-            game.setResult(i, leader % 2);
-        }
+        char choice = 'y';
+        List<Integer> scores = new ArrayList<Integer>();
+        while (choice == 'y') {
+            int leader = (c.declarer() + 1) % 4;
+            for (int i = 0; i < 13; i++) {
+                leader = game.trick(leader);
+                game.setResult(i, leader % 2);
+            }
 
-        int score = c.score(game.getResults());
-        game.clear();
+            scores.add(c.score(game.getResults()));
+            game.clear();
 
-        game.print("N/S: ");
-        for (int r : game.getResults()) {
-            game.print(r == 0 ? "|" : " ");
-        }
-        game.println();
-        game.print("E/W: ");
-        for (int r : game.getResults()) {
-            game.print(r == 1 ? "|" : " ");
-        }
-        game.println();
+            // Show the tricks North and South won
+            game.print("N/S: ");
+            for (int r : game.getResults()) {
+                game.print(r == 0 ? "|" : " ");
+            }
+            game.println();
 
-        game.println("North/South scores " + score);
-        game.println("East/West scores " + -score);
-        game.getChar();
+            // Show the tricks East and West won
+            game.print("E/W: ");
+            for (int r : game.getResults()) {
+                game.print(r == 1 ? "|" : " ");
+            }
+            game.println();
+
+            // Print the scores
+            game.println("North/South scores " + scores.get(scores.size() - 1));
+            game.println("East/West scores " + -scores.get(scores.size() - 1));
+
+            game.println();
+            game.println("  N/S  |  E/W  ");
+            game.println("-------+-------");
+            for (int score : scores) {
+                game.print(score, 6);
+                game.print(" | ");
+                game.print(-score);
+            }
+
+            game.println();
+            game.print("Continue [y/n]? ");
+            choice = game.getChar();
+            game.println(choice);
+
+            choice = Character.toLowerCase(choice);
+
+            // Validate the input
+            while (choice != 'y' && choice != 'n') {
+                game.print("Please enter y or n. ");
+                choice = game.getChar();
+                game.println(choice);
+
+                choice = Character.toLowerCase(choice);
+            }
+        }
 
         game.close();
     }
