@@ -17,8 +17,14 @@ public class Bridge extends Console {
     private int[] results;
 
     /**
+     * The contract of the bridge game, as determined by the auction.
+     */
+    private Contract contract;
+
+    /**
      * Create a bridge game. The game has a standard 52-card deck dealt to 4
-     * players so that each has a hand of 13 cards.
+     * players so that each has a hand of 13 cards. The contract is initialized
+     * to the default specified by {@link Contract#Contract()}.
      */
     public Bridge() {
         super("Bridge");
@@ -96,11 +102,9 @@ public class Bridge extends Console {
      *
      * @param leader the first player to go, one of Rules.NORTH, Rules.EAST,
      *              Rules.SOUTH, and Rules.WEST
-     * @param trump the trump suit, one of Rules.CLUBS, Rules.DIAMONDS,
-     *              Rules.DIAMONDS, and Rules.SPADES
      * @return the player that won
      */
-    public int trick(int leader, int trump) {
+    public int trick(int leader) {
         // Play the cards
         Card entered, lead = null; // lead == null indicates this is the first card of the trick
         Card[] played = new Card[4];
@@ -146,26 +150,7 @@ public class Bridge extends Console {
             if (lead == null) { lead = entered; }
         }
 
-        /*
-         * Determine the winner:
-         * - If both cards follow suit with the leader, the higher rank wins.
-         * - Otherwise the higher trump wins.
-         *
-         * Because the initial highest card is the lead, the highest card will
-         * always follow suit or be trump.
-         */
-        int winner = leader;
-        for (int i = 0; i < 4; i++) {
-            if (Rules.followsSuit(played[i], lead) && Rules.followsSuit(played[winner], lead)) {
-                if (played[i].rank() > played[winner].rank()) { winner = i; }
-            }
-            else {
-                if (played[i].suit() == trump && played[winner].suit() != trump) { winner = i; }
-                else if (played[i].suit() == trump && played[winner].suit() == trump) {
-                    if (played[i].rank() > played[winner].rank()) { winner = i; }
-                }
-            }
-        }
+        int winner = this.winner(played, leader); // Determine the winner of the trick
 
         // Print the played cards
         this.clear();
@@ -174,6 +159,32 @@ public class Bridge extends Console {
         this.println("South: " + played[Rules.SOUTH]);
         this.println("West: " + played[Rules.WEST]);
         this.getChar();
+
+        return winner;
+    }
+
+    /*
+     * Determine the winner.
+     * The highest card wins. To compare to cards:
+     * - If both cards follow suit with the leader, the higher rank wins.
+     * - Otherwise the higher trump wins.
+     *
+     * Because the initial highest card is the lead, the highest card will
+     * always follow suit or be trump.
+     *
+     * @param played the four cards played this trick
+     * @param leader the person who played the first card of the trick
+     */
+    public int winner(Card[] played, int leader) {
+        Card lead = played[leader];
+        int winner = 0;
+
+        for (int i = 0; i < 4; i++) {
+            if (played[i].suit() == played[winner].suit()) {
+                if (played[i].rank() > played[winner].rank()) { winner = i; }
+            }
+            else if (played[i].suit() == this.contract.strain()) { winner = i; }
+        }
 
         return winner;
     }
@@ -223,20 +234,27 @@ public class Bridge extends Console {
         help.close();
     }
 
+    public void auction(int dealer) throws MalformedBidException {
+        this.contract = new Contract(4, Rules.SPADES, 0, Rules.NORTH);
+    }
+
+    public Contract getContract() { return this.contract; }
+
     public static void main(String[] args) throws MalformedBidException {
         Bridge game = new Bridge();
-        Contract c = new Contract(new Bid("4S"), Rules.DOUBLE, Rules.NORTH);
+
+        game.auction(Rules.NORTH);
 
         char choice = 'y';
         List<Integer> scores = new ArrayList<Integer>();
         while (choice == 'y') {
-            int leader = (c.declarer() + 1) % 4;
+            int leader = (game.getContract().declarer() + 1) % 4;
             for (int i = 0; i < 13; i++) {
                 leader = game.trick(leader);
                 game.setResult(i, leader % 2);
             }
 
-            scores.add(c.score(game.getResults()));
+            scores.add(game.getContract().score(game.getResults()));
             game.clear();
 
             // Show the tricks North and South won
