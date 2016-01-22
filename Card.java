@@ -33,7 +33,7 @@ public class Card implements Comparable<Card> {
      * @throws MalformedCardException if the passed string doesn't represent a
      *                                card
      */
-    public Card(String cardStr) throws MalformedCardException {
+    public Card(String cardStr) {
         cardStr = cardStr.toLowerCase(); // The conversion is case-insensitive
 
         // Split the string into two parts

@@ -234,13 +234,13 @@ public class Bridge extends Console {
         help.close();
     }
 
-    public void auction(int dealer) throws MalformedBidException {
+    public void auction(int dealer) {
         this.contract = new Contract(4, Rules.SPADES, 0, Rules.NORTH);
     }
 
     public Contract getContract() { return this.contract; }
 
-    public static void main(String[] args) throws MalformedBidException {
+    public static void main(String[] args) {
         Bridge game = new Bridge();
 
         game.auction(Rules.NORTH);

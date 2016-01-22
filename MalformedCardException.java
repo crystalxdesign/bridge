@@ -1,4 +1,4 @@
-public class MalformedCardException extends Exception {
+public class MalformedCardException extends RuntimeException {
     /**
      * Create the exception with the default message.
      */

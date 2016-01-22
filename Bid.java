@@ -24,16 +24,16 @@ public class Bid implements Comparable<Bid> {
      * - The string is parsed case-insensitively.
      *
      * @param bidStr a string representing the bid to be created
-     * @throws MalformedBidException if the passed string doesn't represent a
+     * @throws MalformedCallException if the passed string doesn't represent a
      *                                bid
      */
-    public Bid(String bidStr) throws MalformedBidException {
+    public Bid(String bidStr) {
         bidStr = bidStr.toLowerCase(); // The conversion is case-insensitive
 
         // Split the string into two parts
         Matcher bidMatch = Pattern.compile("^(?<rank>[1-7])(?<strain>[CcDdHhSs]|[Nn][Tt]?)$").matcher(bidStr);
         if (!bidMatch.matches()) { // Validate the input
-            throw new MalformedBidException(bidStr);
+            throw new MalformedCallException(bidStr);
         }
 
         String rankStr = bidMatch.group("rank");
