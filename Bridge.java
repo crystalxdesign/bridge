@@ -239,6 +239,7 @@ public class Bridge extends Console {
         List<Call> calls = new ArrayList<Call>(); // null -> pass
         Bid lastBid = null;
         int dblLevel = Rules.UNDOUBLED;
+        int declarer = dealer;
 
         for (int i = dealer; calls.size() < 4 || !Bridge.auctionFinished(calls); i = (i+1) % 4) {
             this.clear();
@@ -261,6 +262,7 @@ public class Bridge extends Console {
                     calls.add(entered);
                     lastBid = (Bid) entered;
                     dblLevel = Rules.UNDOUBLED;
+                    declarer = i;
                 }
                 else if (entered instanceof Double && lastBid != null &&
                          (((Double) entered).level() == Rules.DOUBLE && dblLevel == Rules.UNDOUBLED ||
@@ -278,9 +280,7 @@ public class Bridge extends Console {
             }
         }
 
-
-
-        this.contract = lastBid != null ? new Contract(lastBid, dblLevel, Rules.NORTH) : null;
+        this.contract = lastBid != null ? new Contract(lastBid, dblLevel, declarer) : null;
     }
 
     public void showAuction(List<Call> calls, int current, int dealer) {
