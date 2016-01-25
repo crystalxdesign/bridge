@@ -1,7 +1,7 @@
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Bid implements Comparable<Bid> {
+public class Bid extends Call implements Comparable<Bid> {
     private int rank;
     private int strain;
 
@@ -41,7 +41,7 @@ public class Bid implements Comparable<Bid> {
 
         // Convert the strings entered to chars
         char r = rankStr.charAt(0);
-        char s = rankStr.charAt(0);
+        char s = strainStr.charAt(0);
 
         int rank = (int)r - 48; // Convert char digit to integer to get the rank
 

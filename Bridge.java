@@ -235,7 +235,54 @@ public class Bridge extends Console {
     }
 
     public void auction(int dealer) {
-        this.contract = new Contract(4, Rules.SPADES, 0, Rules.NORTH);
+        Call entered;
+        List<Call> calls = new ArrayList<Call>(); // null -> pass
+        Bid lastBid = null;
+
+        for (int i = dealer; calls.size() < 4 || !Bridge.auctionFinished(calls); i = (i+1) % 4) {
+            entered = this.readCall("Enter a call: ");
+            if (entered instanceof Bid && (lastBid == null || ((Bid) entered).compareTo(lastBid) > 0)) {
+                calls.add(entered);
+                lastBid = (Bid) entered;
+            }
+            else if ((entered instanceof Double && lastBid != null) || entered == null) {
+                calls.add(entered);
+            }
+            else {
+                this.print("Illegal call. ");
+            }
+        }
+
+        this.contract = lastBid != null ? new Contract(lastBid, 0, Rules.NORTH) : null;
+    }
+
+    public Call readCall(String prompt) {
+        this.print(prompt);
+        String s = this.readLine();
+        while (!Call.isCall(s)) {
+            this.print(s + " is not a valid call. ");
+            this.print(prompt);
+            s = this.readLine();
+        }
+
+        Call out;
+        if (Call.isBid(s)) {
+            out = new Bid(s);
+        }
+        else if (Call.isDouble(s)) {
+            out = new Double(s);
+        }
+        else {
+            out = null;
+        }
+
+        return out;
+    }
+
+    public static boolean auctionFinished(List<Call> calls) {
+        return calls.get(calls.size() - 1) == null &&
+               calls.get(calls.size() - 2) == null &&
+               calls.get(calls.size() - 3) == null;
     }
 
     public Contract getContract() { return this.contract; }
@@ -243,18 +290,25 @@ public class Bridge extends Console {
     public static void main(String[] args) {
         Bridge game = new Bridge();
 
-        game.auction(Rules.NORTH);
-
         char choice = 'y';
         List<Integer> scores = new ArrayList<Integer>();
         while (choice == 'y') {
-            int leader = (game.getContract().declarer() + 1) % 4;
-            for (int i = 0; i < 13; i++) {
-                leader = game.trick(leader);
-                game.setResult(i, leader % 2);
+            game.auction(Rules.NORTH);
+
+            if (game.getContract() != null) {
+                int leader = (game.getContract().declarer() + 1) % 4;
+                for (int i = 0; i < 13; i++) {
+                    leader = game.trick(leader);
+                    game.setResult(i, leader % 2);
+                }
             }
 
-            scores.add(game.getContract().score(game.getResults()));
+            if (game.getContract() != null) {
+                scores.add(game.getContract().score(game.getResults()));
+            }
+            else {
+                scores.add(0);
+            }
             game.clear();
 
             // Show the tricks North and South won
