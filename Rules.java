@@ -16,9 +16,9 @@ public class Rules {
     public static final int SOUTH = 2;
     public static final int WEST  = 3;
 
-    public static final int PASS     = 0;
-    public static final int DOUBLE   = 1;
-    public static final int REDOUBLE = 2;
+    public static final int UNDOUBLED = 0;
+    public static final int DOUBLE    = 1;
+    public static final int REDOUBLE  = 2;
 
     private Rules() {} // A Rules object should never be instantiated
 

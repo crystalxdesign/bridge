@@ -238,29 +238,51 @@ public class Bridge extends Console {
         Call entered;
         List<Call> calls = new ArrayList<Call>(); // null -> pass
         Bid lastBid = null;
+        int dblLevel = Rules.UNDOUBLED;
 
         for (int i = dealer; calls.size() < 4 || !Bridge.auctionFinished(calls); i = (i+1) % 4) {
-            entered = this.readCall("Enter a call: ");
-            if (entered instanceof Bid && (lastBid == null || ((Bid) entered).compareTo(lastBid) > 0)) {
-                calls.add(entered);
-                lastBid = (Bid) entered;
-            }
-            else if ((entered instanceof Double && lastBid != null) || entered == null) {
-                calls.add(entered);
-            }
-            else {
-                this.print("Illegal call. ");
+            this.clear();
+            this.println("Press a key to start " + Rules.playerName(i) + "'s turn.");
+            this.getChar();
+            this.clear();
+
+            // Display the hand
+            this.show(this.players[i]);
+            this.println();
+
+            boolean valid = false;
+            while (!valid) {
+                entered = this.readCall("Enter a call: ");
+                valid = true; // Assume the entry was legal
+                if (entered instanceof Bid && (lastBid == null || ((Bid) entered).compareTo(lastBid) > 0)) { // Bids
+                    calls.add(entered);
+                    lastBid = (Bid) entered;
+                    dblLevel = Rules.UNDOUBLED;
+                }
+                else if (entered instanceof Double && lastBid != null &&
+                         (((Double) entered).level() == Rules.DOUBLE && dblLevel == Rules.UNDOUBLED ||
+                         ((Double) entered).level() == Rules.REDOUBLE && dblLevel == Rules.DOUBLE)) { // Doubles
+                    dblLevel = ((Double) entered).level();
+                    calls.add(entered);
+                }
+                else if (entered == null) { // Pass
+                    calls.add(entered);
+                }
+                else {
+                    this.print("Illegal call. ");
+                    valid = false;
+                }
             }
         }
 
-        this.contract = lastBid != null ? new Contract(lastBid, 0, Rules.NORTH) : null;
+        this.contract = lastBid != null ? new Contract(lastBid, dblLevel, Rules.NORTH) : null;
     }
 
     public Call readCall(String prompt) {
         this.print(prompt);
         String s = this.readLine();
         while (!Call.isCall(s)) {
-            this.print(s + " is not a valid call. ");
+            this.print(s + " isn't a valid call. ");
             this.print(prompt);
             s = this.readLine();
         }
@@ -293,8 +315,10 @@ public class Bridge extends Console {
         char choice = 'y';
         List<Integer> scores = new ArrayList<Integer>();
         while (choice == 'y') {
+            // Determine the contract
             game.auction(Rules.NORTH);
 
+            // Play the hand
             if (game.getContract() != null) {
                 int leader = (game.getContract().declarer() + 1) % 4;
                 for (int i = 0; i < 13; i++) {
@@ -303,6 +327,7 @@ public class Bridge extends Console {
                 }
             }
 
+            // Calculate the score
             if (game.getContract() != null) {
                 scores.add(game.getContract().score(game.getResults()));
             }
