@@ -127,6 +127,9 @@ public class Bridge extends Console {
             }
             this.println();
 
+            // Print the contract
+            this.println(this.contract.toString());
+
             // Print the results thus far
             for (int r : this.results) {
                 if (r == -1) { continue; } // Skip -1
@@ -349,7 +352,7 @@ public class Bridge extends Console {
         List<Integer> scores = new ArrayList<Integer>();
         while (choice == 'y') {
             // Determine the contract
-            game.auction(Rules.SOUTH);
+            game.auction((int) (Math.random() * 4));
 
             // Play the hand
             if (game.getContract() != null) {
@@ -362,7 +365,12 @@ public class Bridge extends Console {
 
             // Calculate the score
             if (game.getContract() != null) {
-                scores.add(game.getContract().score(game.getResults()));
+                if (game.getContract().declarer() % 2 == 0) {
+                    scores.add(game.getContract().score(game.getResults()));
+                }
+                else {
+                    scores.add(-game.getContract().score(game.getResults()));
+                }
             }
             else {
                 scores.add(0);
@@ -411,6 +419,8 @@ public class Bridge extends Console {
 
                 choice = Character.toLowerCase(choice);
             }
+
+            game = new Bridge(); // Reset the game, start a new one
         }
 
         game.close();

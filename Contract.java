@@ -125,7 +125,7 @@ public class Contract {
         int need = 6 + this.RANK;
         int made = 0;
         for (int r : results) {
-            if (r == this.DECLARER) { made++; }
+            if (r == this.DECLARER % 2) { made++; }
         }
 
         if (this.RANK == 0) { return 0; } // Nobody scores if everybody passed
@@ -141,7 +141,8 @@ public class Contract {
                 contractPoints = 20 * this.RANK;
             }
 
-            contractPoints *= this.DOUBLED * 2;
+            if (this.DOUBLED == Rules.DOUBLE)        { contractPoints *= 2; }
+            else if (this.DOUBLED == Rules.REDOUBLE) { contractPoints *= 4; }
         }
 
         if (made > need) {
@@ -214,5 +215,31 @@ public class Contract {
         }
 
         return contractPoints + overPoints - underPoints + bonusPoints;
+    }
+
+    public String toString() {
+        String out = "";
+        out += this.RANK; // Rank
+
+        // Strain
+        if (this.STRAIN == Rules.CLUBS)         { out += "C"; }
+        else if (this.STRAIN == Rules.DIAMONDS) { out += "D"; }
+        else if (this.STRAIN == Rules.HEARTS)   { out += "H"; }
+        else if (this.STRAIN == Rules.SPADES)   { out += "S"; }
+        else if (this.STRAIN == Rules.NOTRUMP)  { out += "NT"; }
+
+        // Doubles
+        if (this.DOUBLED == Rules.DOUBLE)        { out += "X"; }
+        else if (this.DOUBLED == Rules.REDOUBLE) { out += "XX"; }
+
+        out += " ";
+
+        // Declarer
+        if (this.DECLARER == Rules.NORTH)      { out += "N"; }
+        else if (this.DECLARER == Rules.EAST)  { out += "E"; }
+        else if (this.DECLARER == Rules.SOUTH) { out += "S"; }
+        else if (this.DECLARER == Rules.WEST)  { out += "W"; }
+
+        return out;
     }
 }
