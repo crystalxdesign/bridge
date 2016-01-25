@@ -246,6 +246,9 @@ public class Bridge extends Console {
             this.getChar();
             this.clear();
 
+            // Display previous bids
+            this.showAuction(calls, i, dealer);
+
             // Display the hand
             this.show(this.players[i]);
             this.println();
@@ -253,7 +256,7 @@ public class Bridge extends Console {
             boolean valid = false;
             while (!valid) {
                 entered = this.readCall("Enter a call: ");
-                valid = true; // Assume the entry was legal
+                valid = true; // Assume the entry was legal until proven otherwise
                 if (entered instanceof Bid && (lastBid == null || ((Bid) entered).compareTo(lastBid) > 0)) { // Bids
                     calls.add(entered);
                     lastBid = (Bid) entered;
@@ -275,7 +278,37 @@ public class Bridge extends Console {
             }
         }
 
+
+
         this.contract = lastBid != null ? new Contract(lastBid, dblLevel, Rules.NORTH) : null;
+    }
+
+    public void showAuction(List<Call> calls, int current, int dealer) {
+        for (int i = 0; i < 4; i++) {
+            this.print(" ");
+
+            if (i == current) { this.setTextColour(java.awt.Color.RED); }
+            this.print(Rules.playerName(i), 6);
+            this.setTextColour(java.awt.Color.BLACK);
+
+            this.print(i != 3 ? "|" : "\n");
+        }
+        this.println("-------+-------+-------+-------");
+        for (int i = 0; i < dealer; i++) {
+            this.print("       |");
+        }
+        for (int i = 0; i < calls.size(); i++) {
+            this.print(" ");
+            if (calls.get(i) != null) {
+                this.print(calls.get(i).toString(), 6);
+            }
+            else {
+                this.print("P", 6);
+            }
+
+            this.print((i + dealer) % 4 != 3 ? "|" : "\n");
+        }
+        this.println();
     }
 
     public Call readCall(String prompt) {
@@ -316,7 +349,7 @@ public class Bridge extends Console {
         List<Integer> scores = new ArrayList<Integer>();
         while (choice == 'y') {
             // Determine the contract
-            game.auction(Rules.NORTH);
+            game.auction(Rules.SOUTH);
 
             // Play the hand
             if (game.getContract() != null) {
