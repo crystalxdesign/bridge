@@ -1,3 +1,5 @@
+import java.awt.Image;
+import java.io.File;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -14,6 +16,8 @@ public class Card implements Comparable<Card> {
      * Must be one of: 0 (clubs), 1 (diamonds), 2 (hearts), or 3 (spades).
      */
     private int suit;
+
+    private Image img;
 
     /**
      * Creates the default card (ace of spades).
@@ -66,6 +70,14 @@ public class Card implements Comparable<Card> {
 
         this.rank = rank;
         this.suit = suit;
+
+        String fName = "images" + File.separator + this.toString().toLowerCase() + ".gif";
+        try {
+            this.img = javax.imageio.ImageIO.read(new File(fName));
+        }
+        catch (java.io.IOException ioe) {
+            System.out.println(fName + " not found.");
+        }
     }
 
     /**
@@ -77,6 +89,14 @@ public class Card implements Comparable<Card> {
     public Card(int rank, int suit) {
         this.rank = rank;
         this.suit = suit;
+
+        String fName = "images" + File.separator + this.toString().toLowerCase() + ".gif";
+        try {
+            this.img = javax.imageio.ImageIO.read(new File(fName));
+        }
+        catch (java.io.IOException ioe) {
+            System.out.println(fName + " not found.");
+        }
     }
 
     /**
@@ -156,4 +176,6 @@ public class Card implements Comparable<Card> {
 
         return result;
     }
+
+    public Image getImage() { return this.img; }
 }

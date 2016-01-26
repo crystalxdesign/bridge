@@ -47,22 +47,10 @@ public class Bridge extends Console {
      *
      * @param p the player whose hand is being displayed
      */
-    public void show(Player p) {
-        this.print("C: ");
-        for (Card c : p.suit(Rules.CLUBS)) { this.print(c.rankStr() + " "); }
-        this.println();
-
-        this.print("D: ");
-        for (Card c : p.suit(Rules.DIAMONDS)) { this.print(c.rankStr() + " "); }
-        this.println();
-
-        this.print("H: ");
-        for (Card c : p.suit(Rules.HEARTS)) { this.print(c.rankStr() + " "); }
-        this.println();
-
-        this.print("S: ");
-        for (Card c : p.suit(Rules.SPADES)) { this.print(c.rankStr() + " "); }
-        this.println();
+    public void show(Card[] cards, int top) {
+        for (int i = 0; i < cards.length; i++) {
+            this.drawImage(cards[i].getImage(), i * 20, top, null);
+        }
     }
 
     /**
@@ -144,25 +132,30 @@ public class Bridge extends Console {
             // Display cards
             if (i != dummy) {
                 this.println("Your hand: ");
-                this.show(this.players[i]);
-                this.println();
+                this.show(this.players[i].hand(), 15 * this.getRow());
+
+                if (!(i == leader && this.results[0] == -1)) {
+                    this.setCursor(this.getRow() + 6, 1);
+                    this.println("Dummy's hand: ");
+                    this.show(this.players[dummy].hand(), 15 * (this.getRow() + 1));
+                }
             }
             else {
-                this.println("Your hand: ");
-                this.show(this.players[declarer]);
-                this.println();
-            }
-
-            if (!(i == leader && this.results[0] == -1)) {
                 this.println("Dummy's hand: ");
-                this.show(this.players[dummy]);
+                this.show(this.players[dummy].hand(), 15 * this.getRow());
+
+                this.setCursor(this.getRow() + 6, 1);
+                this.println("Declarer's hand: ");
+                this.show(this.players[declarer].hand(), 15 * (this.getRow() + 1));
             }
 
+            this.setCursor(this.getRow() + 6, 1);
             entered = this.readCard("Enter a card (or ? for help): ");
             pos = this.players[i].find(entered);
 
             // Validate card
             for ( ; !Rules.playable(entered, this.players[i], lead); pos = this.players[i].find(entered)) {
+                this.setCursor(this.getRow() - 1, 1);
                 this.print(entered.toString() + " can't be played. ");
                 entered = this.readCard("Enter a card  (or ? for help): ");
             }
@@ -261,7 +254,7 @@ public class Bridge extends Console {
         List<Call> calls = new ArrayList<Call>(); // null -> pass
         Bid lastBid = null;
         int dblLevel = Rules.UNDOUBLED;
-        int side = dealer;
+        int side = 0;
 
         for (int i = dealer; calls.size() < 4 || !Bridge.auctionFinished(calls); i = (i+1) % 4) {
             this.clear();
@@ -273,7 +266,7 @@ public class Bridge extends Console {
             this.showAuction(calls, i, dealer);
 
             // Display the hand
-            this.show(this.players[i]);
+            this.show(this.players[i].hand(), 20 * this.getRow() + 10);
             this.println();
 
             boolean valid = false;
@@ -296,15 +289,20 @@ public class Bridge extends Console {
                     calls.add(entered);
                 }
                 else {
+                    this.setCursor(this.getRow() - 1, 1);
                     this.print("Illegal call. ");
                     valid = false;
                 }
             }
         }
 
-        int declarer = Rules.declarer(calls, side, lastBid.strain(), dealer);
-
-        this.contract = lastBid != null ? new Contract(lastBid, dblLevel, declarer) : null;
+        if (lastBid != null) {
+            int declarer = Rules.declarer(calls, side, lastBid.strain(), dealer);
+            this.contract = lastBid != null ? new Contract(lastBid, dblLevel, declarer) : null;
+        }
+        else {
+            this.contract = null;
+        }
     }
 
     public void showAuction(List<Call> calls, int current, int dealer) {
@@ -339,6 +337,7 @@ public class Bridge extends Console {
         this.print(prompt);
         String s = this.readLine();
         while (!Call.isCall(s)) {
+            this.setCursor(this.getRow() - 1, 1); // Move back to the start of the current row
             this.print(s + " isn't a valid call. ");
             this.print(prompt);
             s = this.readLine();
@@ -426,8 +425,10 @@ public class Bridge extends Console {
             }
 
             game.println();
+            game.setCursorVisible(true);
             game.print("Continue [y/n]? ");
             choice = game.getChar();
+            game.setCursorVisible(false);
             game.println(choice);
 
             choice = Character.toLowerCase(choice);
@@ -441,6 +442,7 @@ public class Bridge extends Console {
                 choice = Character.toLowerCase(choice);
             }
 
+            game.close();
             game = new Bridge(); // Reset the game, start a new one
         }
 
