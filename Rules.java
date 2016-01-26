@@ -1,4 +1,4 @@
-public class Rules {
+public final class Rules {
     public static final int CLUBS    = 0;
     public static final int DIAMONDS = 1;
     public static final int HEARTS   = 2;
@@ -62,6 +62,12 @@ public class Rules {
         return legalSuit && legalCard;
     }
 
+    /**
+     * Get the name of a player from their number.
+     *
+     * @param player the number of the player
+     * @return the name of the player as a String
+     */
     public static String playerName(int player) {
         String name = "";
         if (player == Rules.NORTH)      { name = "North"; }

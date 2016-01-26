@@ -5,11 +5,20 @@ public class Bid extends Call implements Comparable<Bid> {
     private int rank;
     private int strain;
 
+    /**
+     * Create the default bid (1C).
+     */
     public Bid() {
         this.rank = 1;
         this.strain = Rules.CLUBS;
     }
 
+    /**
+     * Create bid from two ints.
+     *
+     * @param rank 1-7 inclusive
+     * @param strain C, D, H, S, or NT
+     */
     public Bid(int rank, int strain) {
         this.rank = rank;
         this.strain = strain;
