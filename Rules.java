@@ -72,6 +72,15 @@ public class Rules {
         return name;
     }
 
+    /**
+     * Find the declarer of an auction.
+     *
+     * @param calls the auction history
+     * @param side the side to make the last bid
+     * @param strain the strain of the last bid
+     * @param dealer the person who bid first
+     * @return the declarer
+     */
     public static int declarer(java.util.List<Call> calls, int side, int strain, int dealer) {
         int declarer = -1;
 
