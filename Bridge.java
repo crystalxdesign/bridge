@@ -48,8 +48,6 @@ public class Bridge extends Console {
      * @param p the player whose hand is being displayed
      */
     public void show(Player p) {
-        this.println("Your hand:");
-
         this.print("C: ");
         for (Card c : p.suit(Rules.CLUBS)) { this.print(c.rankStr() + " "); }
         this.println();
@@ -104,11 +102,16 @@ public class Bridge extends Console {
      *              Rules.SOUTH, and Rules.WEST
      * @return the player that won
      */
-    public int trick(int leader) {
+    public int trick(int declarer, int leader) {
         // Play the cards
         Card entered, lead = null; // lead == null indicates this is the first card of the trick
         Card[] played = new Card[4];
         int pos; // The position of the entered card in the current player's hand
+
+        if (leader == -1) {
+            leader = (declarer + 1) % 4;
+        }
+        int dummy = (declarer + 2) % 4;
 
         for (int i = leader; i != (leader+4) % 4 || lead == null; i = (i+1) % 4) {
             this.clear();
@@ -137,7 +140,23 @@ public class Bridge extends Console {
                 else { this.print("-"); } // Otherwise display a -
             }
             this.println();
-            this.show(this.players[i]); // Print the hand
+
+            // Display cards
+            if (i != dummy) {
+                this.println("Your hand: ");
+                this.show(this.players[i]);
+                this.println();
+            }
+            else {
+                this.println("Your hand: ");
+                this.show(this.players[declarer]);
+                this.println();
+            }
+
+            if (!(i == leader && this.results[0] == -1)) {
+                this.println("Dummy's hand: ");
+                this.show(this.players[dummy]);
+            }
 
             entered = this.readCard("Enter a card (or ? for help): ");
             pos = this.players[i].find(entered);
@@ -242,7 +261,7 @@ public class Bridge extends Console {
         List<Call> calls = new ArrayList<Call>(); // null -> pass
         Bid lastBid = null;
         int dblLevel = Rules.UNDOUBLED;
-        int declarer = dealer;
+        int side = dealer;
 
         for (int i = dealer; calls.size() < 4 || !Bridge.auctionFinished(calls); i = (i+1) % 4) {
             this.clear();
@@ -265,7 +284,7 @@ public class Bridge extends Console {
                     calls.add(entered);
                     lastBid = (Bid) entered;
                     dblLevel = Rules.UNDOUBLED;
-                    declarer = i;
+                    side = i % 2;
                 }
                 else if (entered instanceof Double && lastBid != null &&
                          (((Double) entered).level() == Rules.DOUBLE && dblLevel == Rules.UNDOUBLED ||
@@ -282,6 +301,8 @@ public class Bridge extends Console {
                 }
             }
         }
+
+        int declarer = Rules.declarer(calls, side, lastBid.strain(), dealer);
 
         this.contract = lastBid != null ? new Contract(lastBid, dblLevel, declarer) : null;
     }
@@ -350,15 +371,15 @@ public class Bridge extends Console {
 
         char choice = 'y';
         List<Integer> scores = new ArrayList<Integer>();
+        int leader = -1;
         while (choice == 'y') {
             // Determine the contract
             game.auction((int) (Math.random() * 4));
 
             // Play the hand
             if (game.getContract() != null) {
-                int leader = (game.getContract().declarer() + 1) % 4;
                 for (int i = 0; i < 13; i++) {
-                    leader = game.trick(leader);
+                    leader = game.trick(game.getContract().declarer(), leader);
                     game.setResult(i, leader % 2);
                 }
             }

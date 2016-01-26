@@ -71,4 +71,16 @@ public class Rules {
 
         return name;
     }
+
+    public static int declarer(java.util.List<Call> calls, int side, int strain, int dealer) {
+        int declarer = -1;
+
+        for (int i = 0; i < calls.size() && declarer == -1; i++) {
+            if (calls.get(i) instanceof Bid && ((Bid) calls.get(i)).strain() == strain && (i+dealer) % 2 == side) {
+                declarer = i;
+            }
+        }
+
+        return declarer;
+    }
 }
