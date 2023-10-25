@@ -1,6 +1,7 @@
 package bridge;
 
-import bridge.hsa.Console;
+import Deck;
+import hsa.Console;
 import java.util.List;
 import java.util.ArrayList;
 
